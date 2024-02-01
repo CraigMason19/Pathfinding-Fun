@@ -13,21 +13,23 @@ namespace PathfindingFun
 {
     public partial class MainForm : Form
     {
+        // Colors
         const KnownColor StartNodeColor = KnownColor.LimeGreen;
         const KnownColor EndNodeColor = KnownColor.Red;
         const KnownColor ConsideredNodeColor = KnownColor.PaleGreen;
         const KnownColor PathColor = KnownColor.Yellow;
-        const KnownColor WallColor = KnownColor.CornflowerBlue; 
+        const KnownColor WallColor = KnownColor.DarkBlue; 
 
+        // General
         Mouse _mouse;
-
-        GridDisplay _gridDisplay;
-        Size SmallGridSize;
-        Size LargeGridSize;
-        Size SmallPanelSize;
-         
         int LastNumericUpDown;
 
+        // Grid
+        GridDisplay _gridDisplay;
+        Size _smallGridSize;
+        Size _largeGridSize;
+        Size _smallPanelSize; // The size in pixels when minimized
+         
         // Search nodes
         SearchNode StartSearchNode;
         SearchNode EndSearchNode;
@@ -37,19 +39,17 @@ namespace PathfindingFun
                                          // Could always just add a boolean to the search node to show if it is on the closed list
         SearchNode[,] PathfindingGrid;
 
-
         public MainForm()
         {
             InitializeComponent();
-            SmallGridSize = new Size(30, 30);
+            _smallGridSize = new Size(30, 30);
             LastNumericUpDown = Convert.ToInt32(GridSizeUpDown.Value);
-            LargeGridSize = new Size(Convert.ToInt32(GridSizeUpDown.Value), Convert.ToInt32(GridSizeUpDown.Value));
-            SmallPanelSize = new Size(600, 600);
+            _largeGridSize = new Size(Convert.ToInt32(GridSizeUpDown.Value), Convert.ToInt32(GridSizeUpDown.Value));
+            _smallPanelSize = new Size(600, 600);
 
             _gridDisplay = new GridDisplay();
-            _gridDisplay.CellSize = SmallGridSize;
-            _gridDisplay.HorizontalCells = 20;
-            _gridDisplay.VerticalCells = 20;
+            _gridDisplay.CellSize = _smallGridSize;
+            _gridDisplay.Dimensions = new Size(20, 20);
 
             _mouse = new Mouse();
             _mouse.Local = new Point(0, 0);
@@ -76,10 +76,10 @@ namespace PathfindingFun
             OpenHeap = new BinaryHeap<SearchNode>();
             ClosedHash = new HashSet<SearchNode>(new CustomNodeComparer());
 
-            PathfindingGrid = new SearchNode[_gridDisplay.HorizontalCells, _gridDisplay.VerticalCells];
-            for (int x = 0; x < _gridDisplay.HorizontalCells; x++)
+            PathfindingGrid = new SearchNode[_gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height];
+            for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
             {
-                for (int y = 0; y < _gridDisplay.VerticalCells; y++)
+                for (int y = 0; y < _gridDisplay.Dimensions.Height; y++)
                 {
                     PathfindingGrid[x, y] = new SearchNode(x, y);
                 }
@@ -134,8 +134,8 @@ namespace PathfindingFun
             // If the left mouse button is clicked, can draw extra walls.
             if (_mouse.Moved && e.Button == MouseButtons.Left)
             {
-                if (Helper.IsInRange(0, _gridDisplay.HorizontalCells - 1, _mouse.Grid.X) &&
-                    Helper.IsInRange(0, _gridDisplay.VerticalCells - 1, _mouse.Grid.Y))
+                if (Helper.IsInRange(0, _gridDisplay.Dimensions.Width - 1, _mouse.Grid.X) &&
+                    Helper.IsInRange(0, _gridDisplay.Dimensions.Height - 1, _mouse.Grid.Y))
                 {
                     _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, Color.FromKnownColor(WallColor));
                     PathfindingGrid[_mouse.Grid.X, _mouse.Grid.Y]._Walkable = false;
@@ -145,23 +145,13 @@ namespace PathfindingFun
 
         private void panel1_MouseDown(object sender, MouseEventArgs e)
         {
-            //if (e.Button == System.Windows.Forms.MouseButtons.Left)
-            //{
-            //    // Need to draw the first square         
-            //    if (Helper.IsInRange(0, LevelMap.HorizontalCells - 1, MouseGrid.X) &&
-            //        Helper.IsInRange(0, LevelMap.VerticalCells - 1, MouseGrid.Y))
-            //    {
-            //        LevelMap.ColourSquare(Panel1.CreateGraphics(), MouseGrid, Color.CornflowerBlue);
-            //        PathfindingGrid[MouseGrid.X, MouseGrid.Y]._Walkable = false;
-            //    }
-            //}
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                // Need to draw the first square         
-                if (Helper.IsInRange(0, _gridDisplay.HorizontalCells - 1, _mouse.Grid.X) &&
-                    Helper.IsInRange(0, _gridDisplay.VerticalCells - 1, _mouse.Grid.Y))
+                // Need to draw the first square on mouse down        
+                if (Helper.IsInRange(0, _gridDisplay.Dimensions.Width - 1, _mouse.Grid.X) &&
+                    Helper.IsInRange(0, _gridDisplay.Dimensions.Height - 1, _mouse.Grid.Y))
                 {
-                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, Color.CornflowerBlue);
+                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, Color.FromKnownColor(WallColor));
                     PathfindingGrid[_mouse.Grid.X, _mouse.Grid.Y]._Walkable = false;
                 }
             }
@@ -190,10 +180,10 @@ namespace PathfindingFun
             OpenHeap.Insert(StartSearchNode);
             PathfindingGrid[StartSearchNode._Pos.X, StartSearchNode._Pos.Y]._Walkable = true;
             // Redraw grid otherwise it is ugly
-            if (SmallGridButton.Checked)
-            {
-                _gridDisplay.Draw(Panel1.CreateGraphics(), _mouse.Local);
-            }
+            //if (SmallGridButton.Checked)
+            //{
+            //    _gridDisplay.Draw(Panel1.CreateGraphics(), _mouse.Local);
+            //}
         }
 
         private void EndSearchNode_Click(object sender, System.EventArgs e)
@@ -203,10 +193,10 @@ namespace PathfindingFun
             EndSearchNode = new SearchNode(_mouse.Grid, 0);
             PathfindingGrid[EndSearchNode._Pos.X, EndSearchNode._Pos.Y]._Walkable = true;
             // Redraw grid otherwise it is ugly TODO
-            if (SmallGridButton.Checked)
-            {
-                _gridDisplay.Draw(Panel1.CreateGraphics(), _mouse.Local);
-            }
+            //if (SmallGridButton.Checked)
+            //{
+            //    _gridDisplay.Draw(Panel1.CreateGraphics(), _mouse.Local);
+            //}
         }
 
         private void RunAI_Click(object sender, EventArgs e)
@@ -350,14 +340,13 @@ namespace PathfindingFun
         private void SmallGridButton_CheckedChanged(object sender, EventArgs e)
         {
             _gridDisplay = new GridDisplay();
-            _gridDisplay.CellSize = SmallGridSize;
-            _gridDisplay.HorizontalCells = Panel1.Width / SmallGridSize.Width;
-            _gridDisplay.VerticalCells = Panel1.Height / SmallGridSize.Height;
+            _gridDisplay.CellSize = _smallGridSize;
+            _gridDisplay.Dimensions = new Size(Panel1.Width / _smallGridSize.Width, Panel1.Height / _smallGridSize.Height);
 
-            PathfindingGrid = new SearchNode[_gridDisplay.HorizontalCells, _gridDisplay.VerticalCells];
-            for (int x = 0; x < _gridDisplay.HorizontalCells; x++)
+            PathfindingGrid = new SearchNode[_gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height];
+            for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
             {
-                for (int y = 0; y < _gridDisplay.VerticalCells; y++)
+                for (int y = 0; y < _gridDisplay.Dimensions.Height; y++)
                 {
                     PathfindingGrid[x, y] = new SearchNode(x, y);
                 }
@@ -369,14 +358,13 @@ namespace PathfindingFun
         private void LargeGridButton_CheckedChanged(object sender, EventArgs e)
         {
             _gridDisplay = new GridDisplay();
-            _gridDisplay.CellSize = new Size(LargeGridSize.Width, LargeGridSize.Height);
-            _gridDisplay.HorizontalCells = Panel1.Width / LargeGridSize.Width;
-            _gridDisplay.VerticalCells = Panel1.Height / LargeGridSize.Height;
+            _gridDisplay.CellSize = _largeGridSize;
+            _gridDisplay.Dimensions = new Size(Panel1.Width / _largeGridSize.Width, Panel1.Height / _largeGridSize.Height);
 
-            PathfindingGrid = new SearchNode[_gridDisplay.HorizontalCells, _gridDisplay.VerticalCells];
-            for (int x = 0; x < _gridDisplay.HorizontalCells; x++)
+            PathfindingGrid = new SearchNode[_gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height];
+            for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
             {
-                for (int y = 0; y < _gridDisplay.VerticalCells; y++)
+                for (int y = 0; y < _gridDisplay.Dimensions.Height; y++)
                 {
                     PathfindingGrid[x, y] = new SearchNode(x, y);
                 }
@@ -391,14 +379,14 @@ namespace PathfindingFun
             _gridDisplay.ColourSquare(Panel1.CreateGraphics(), StartSearchNode._Pos, Color.FromKnownColor(StartNodeColor));
             _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode._Pos, Color.FromKnownColor(EndNodeColor));
 
-            for (int x = 0; x < _gridDisplay.HorizontalCells; x++)
+            for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
             {
-                for (int y = 0; y < _gridDisplay.VerticalCells; y++)
+                for (int y = 0; y < _gridDisplay.Dimensions.Height; y++)
                 {
                     SearchNode tmp = PathfindingGrid[x, y];
                     if (tmp._Walkable == false)
                     {
-                        _gridDisplay.ColourSquare(Panel1.CreateGraphics(), tmp._Pos, Color.CornflowerBlue);
+                        _gridDisplay.ColourSquare(Panel1.CreateGraphics(), tmp._Pos, Color.FromKnownColor(WallColor));
                     }
                 }
             }
@@ -430,7 +418,7 @@ namespace PathfindingFun
                 n._Walkable = (r.Next(100) > RandomnessBar.Value);
                 if (!n._Walkable)
                 {
-                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), n._Pos, Color.CornflowerBlue);
+                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), n._Pos, Color.FromKnownColor(WallColor));
                 }
             }
         }
@@ -460,7 +448,7 @@ namespace PathfindingFun
                     break;
 
                 case FormWindowState.Normal:
-                    Panel1.Size = SmallPanelSize;
+                    Panel1.Size = _smallPanelSize;
                     if (!LargeGridButton.Checked)
                     {
                         SmallGridButton_CheckedChanged(sender, e);
@@ -483,8 +471,8 @@ namespace PathfindingFun
 
         private void GridSizeUpDown_ValueChanged(object sender, EventArgs e)
         {
-            LargeGridSize.Width = Convert.ToInt32(GridSizeUpDown.Value);
-            LargeGridSize.Height = Convert.ToInt32(GridSizeUpDown.Value);
+            _largeGridSize.Width = Convert.ToInt32(GridSizeUpDown.Value);
+            _largeGridSize.Height = Convert.ToInt32(GridSizeUpDown.Value);
         }
 
         // TODO - index out range
@@ -532,8 +520,8 @@ namespace PathfindingFun
             // 2. Pick a cell, mark it as part of the maze. Add the walls of the cell
             // to the wall list
             // opposite = (1,1);
-            int a = rnd.Next(_gridDisplay.HorizontalCells / 2 - 1);
-            int b = rnd.Next(_gridDisplay.VerticalCells / 2 - 1);
+            int a = rnd.Next(_gridDisplay.Dimensions.Width / 2 - 1);
+            int b = rnd.Next(_gridDisplay.Dimensions.Height / 2 - 1);
             MazeNode passage = new MazeNode(a, b);
             MazeNode opposite = new MazeNode(a, b);
             PathfindingGrid[opposite._X, opposite._Y]._Walkable = true;
@@ -616,7 +604,7 @@ namespace PathfindingFun
             {
                 if (!n._Walkable)
                 {
-                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), n._Pos, Color.CornflowerBlue);
+                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), n._Pos, Color.FromKnownColor(WallColor));
                 }
             }            
         }

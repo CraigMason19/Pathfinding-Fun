@@ -9,33 +9,30 @@ namespace PathfindingFun
     /// </summary>
     class GridDisplay
     {
-        public int HorizontalCells { get; set; }
-        public int VerticalCells { get; set; }
+        public Size Dimensions { get; set; }
+        public Size CellSize { get; set; }
         public Point Offset { get; set; }
-        public Size CellSize { get; set; }        
 
         public GridDisplay()
         {
-            // Set some defaults
-            Offset = new Point(0, 0);
+            Dimensions = new Size(1, 1);
             CellSize = new Size(10, 10);
-            HorizontalCells = 1;
-            VerticalCells = 1;
+            Offset = new Point(0, 0);
         }
 
-        public virtual Point GetSquareScreenPosition(Point square)
+        public Point GetSquareScreenPosition(Point square)
         {
             int x = ((CellSize.Width * square.X) + Offset.X);
             int y = ((CellSize.Height * square.Y) + Offset.Y);
             return new Point(x, y);
         }
 
-        public virtual void ColourSquare(Graphics g, Point square, Color colour)
+        public void ColourSquare(Graphics g, Point square, Color colour)
         {
             g.FillRectangle(new SolidBrush(colour), new Rectangle(GetSquareScreenPosition(square), CellSize));
         }
 
-        public virtual void ColourSquare(Graphics g, List<SearchNode> l, Color colour)
+        public void ColourSquare(Graphics g, List<SearchNode> l, Color colour)
         {
             foreach (SearchNode n in l)
             {
@@ -43,7 +40,7 @@ namespace PathfindingFun
             }
         }
 
-        public virtual void DrawCosts(Graphics graph, Point square, int g, float h)
+        public void DrawCosts(Graphics graph, Point square, int g, float h)
         {
             Font drawFont = new Font("Arial", 6);
             SolidBrush drawBrush = new SolidBrush(Color.Black);
@@ -69,7 +66,7 @@ namespace PathfindingFun
             graph.DrawString(drawString, drawFont, drawBrush, drawPoint);
         }
 
-        public virtual void DrawCosts(Graphics graph, List<SearchNode> l)
+        public void DrawCosts(Graphics graph, List<SearchNode> l)
         {
             Font drawFont = new Font("Arial", 6);
             SolidBrush drawBrush = new SolidBrush(Color.Black);
@@ -111,8 +108,8 @@ namespace PathfindingFun
             Point endP = new Point();
             // Draw horizontals
             startP.X = Offset.X;
-            endP.X = Offset.X + HorizontalCells * CellSize.Width;
-            for (int i = 0; i <= VerticalCells; i++)
+            endP.X = Offset.X + Dimensions.Width * CellSize.Width;
+            for (int i = 0; i <= Dimensions.Height; i++)
             {
                 startP.Y = Offset.Y + i * CellSize.Height;
                 endP.Y = startP.Y;
@@ -121,8 +118,8 @@ namespace PathfindingFun
 
             // Draw verticals
             startP.Y = Offset.Y;
-            endP.Y = Offset.Y + VerticalCells * CellSize.Height;
-            for (int i = 0; i <= HorizontalCells; i++)
+            endP.Y = Offset.Y + Dimensions.Height * CellSize.Height;
+            for (int i = 0; i <= Dimensions.Width; i++)
             {
                 startP.X = Offset.X + i * CellSize.Width;
                 endP.X = startP.X;
