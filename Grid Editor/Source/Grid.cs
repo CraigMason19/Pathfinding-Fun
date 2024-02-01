@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Drawing;
-using System.Windows;
 
 namespace PathfindingFun
 {
-    // class that can draw a grid
+    /// <summary>
+    /// Class responsible for drawing the grid.
+    /// </summary>
     class Grid
     {
         public int HorizontalCells { get; set; }
