@@ -26,8 +26,8 @@ namespace PathfindingFun
 
         // Grid
         GridDisplay _gridDisplay;
-        Size _smallGridSize;
-        Size _largeGridSize;
+        int _smallGridSize;
+        int _largeGridSize;
         Size _smallPanelSize; // The size in pixels when minimized
          
         // Search nodes
@@ -42,9 +42,9 @@ namespace PathfindingFun
         public MainForm()
         {
             InitializeComponent();
-            _smallGridSize = new Size(30, 30);
+            _smallGridSize = 30;
             LastNumericUpDown = Convert.ToInt32(GridSizeUpDown.Value);
-            _largeGridSize = new Size(Convert.ToInt32(GridSizeUpDown.Value), Convert.ToInt32(GridSizeUpDown.Value));
+            _largeGridSize = Convert.ToInt32(GridSizeUpDown.Value);
             _smallPanelSize = new Size(600, 600);
 
             _gridDisplay = new GridDisplay();
@@ -106,8 +106,8 @@ namespace PathfindingFun
             //MouseGrid.Y = (MouseLocal.Y / LevelMap.CellSize.Height);
             //MouseGridTextBox.Text = string.Format("X: {0} , Y: {1}", MouseGrid.X, MouseGrid.Y);
 
-            _mouse.Grid.X = (_mouse.Local.X / _gridDisplay.CellSize.Width);
-            _mouse.Grid.Y = (_mouse.Local.Y / _gridDisplay.CellSize.Height);
+            _mouse.Grid.X = (_mouse.Local.X / _gridDisplay.CellSize);
+            _mouse.Grid.Y = (_mouse.Local.Y / _gridDisplay.CellSize);
             MouseGridTextBox.Text = _mouse.GridSpaceString();
 
             //if (MouseGrid != LastPoint)
@@ -331,7 +331,7 @@ namespace PathfindingFun
         {
             _gridDisplay = new GridDisplay();
             _gridDisplay.CellSize = _smallGridSize;
-            _gridDisplay.Dimensions = new Size(Panel1.Width / _smallGridSize.Width, Panel1.Height / _smallGridSize.Height);
+            _gridDisplay.Dimensions = new Size(Panel1.Width / _smallGridSize, Panel1.Height / _smallGridSize);
 
             PathfindingGrid = new SearchNode[_gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height];
             for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
@@ -349,7 +349,7 @@ namespace PathfindingFun
         {
             _gridDisplay = new GridDisplay();
             _gridDisplay.CellSize = _largeGridSize;
-            _gridDisplay.Dimensions = new Size(Panel1.Width / _largeGridSize.Width, Panel1.Height / _largeGridSize.Height);
+            _gridDisplay.Dimensions = new Size(Panel1.Width / _largeGridSize, Panel1.Height / _largeGridSize);
 
             PathfindingGrid = new SearchNode[_gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height];
             for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
@@ -461,8 +461,8 @@ namespace PathfindingFun
 
         private void GridSizeUpDown_ValueChanged(object sender, EventArgs e)
         {
-            _largeGridSize.Width = Convert.ToInt32(GridSizeUpDown.Value);
-            _largeGridSize.Height = Convert.ToInt32(GridSizeUpDown.Value);
+            _largeGridSize = Convert.ToInt32(GridSizeUpDown.Value);
+            _largeGridSize = Convert.ToInt32(GridSizeUpDown.Value);
         }
 
         // TODO - index out range
