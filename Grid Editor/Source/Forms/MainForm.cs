@@ -179,11 +179,6 @@ namespace PathfindingFun
             OpenHeap.Clear();
             OpenHeap.Insert(StartSearchNode);
             PathfindingGrid[StartSearchNode._Pos.X, StartSearchNode._Pos.Y]._Walkable = true;
-            // Redraw grid otherwise it is ugly
-            //if (SmallGridButton.Checked)
-            //{
-            //    _gridDisplay.Draw(Panel1.CreateGraphics(), _mouse.Local);
-            //}
         }
 
         private void EndSearchNode_Click(object sender, System.EventArgs e)
@@ -192,11 +187,6 @@ namespace PathfindingFun
             _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, Color.FromKnownColor(EndNodeColor));
             EndSearchNode = new SearchNode(_mouse.Grid, 0);
             PathfindingGrid[EndSearchNode._Pos.X, EndSearchNode._Pos.Y]._Walkable = true;
-            // Redraw grid otherwise it is ugly TODO
-            //if (SmallGridButton.Checked)
-            //{
-            //    _gridDisplay.Draw(Panel1.CreateGraphics(), _mouse.Local);
-            //}
         }
 
         private void RunAI_Click(object sender, EventArgs e)

@@ -32,14 +32,6 @@ namespace PathfindingFun
             g.FillRectangle(new SolidBrush(colour), new Rectangle(GetSquareScreenPosition(square), CellSize));
         }
 
-        public void ColourSquare(Graphics g, List<SearchNode> l, Color colour)
-        {
-            foreach (SearchNode n in l)
-            {
-                g.FillRectangle(new SolidBrush(colour), new Rectangle(GetSquareScreenPosition(n._Pos), CellSize));
-            }
-        }
-
         public void DrawCosts(Graphics graph, Point square, int g, float h)
         {
             Font drawFont = new Font("Arial", 6);
@@ -64,38 +56,6 @@ namespace PathfindingFun
             drawPoint.X += CellSize.Width - 15;
             drawPoint.Y += CellSize.Height - 10;
             graph.DrawString(drawString, drawFont, drawBrush, drawPoint);
-        }
-
-        public void DrawCosts(Graphics graph, List<SearchNode> l)
-        {
-            Font drawFont = new Font("Arial", 6);
-            SolidBrush drawBrush = new SolidBrush(Color.Black);
-
-            foreach (SearchNode n in l)
-            {
-                int g = n._G;
-                int h = (int)n._H;
-
-                Point tmp = GetSquareScreenPosition(n._Pos);
-
-                // F
-                String drawString = (g + h).ToString();
-                Point drawPoint = tmp;
-                graph.DrawString(drawString, drawFont, drawBrush, drawPoint);
-
-                // G
-                drawString = g.ToString();
-                drawPoint = tmp;
-                drawPoint.Y += CellSize.Height - 10;
-                graph.DrawString(drawString, drawFont, drawBrush, drawPoint);
-
-                // H
-                drawString = h.ToString();
-                drawPoint = tmp;
-                drawPoint.X += CellSize.Width - 15;
-                drawPoint.Y += CellSize.Height - 10;
-                graph.DrawString(drawString, drawFont, drawBrush, drawPoint);
-            }
         }
 
         public virtual void Draw(Graphics Graf, Point mouse)
