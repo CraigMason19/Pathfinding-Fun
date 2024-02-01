@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 // C# version of a binary heap as described here
-// http://www.policyalmanac.org/games/binaryHeaps.htm
 // http://weblogs.asp.net/cumpsd/archive/2005/02/13/371719.aspx
 
 namespace PathfindingFun
@@ -32,58 +30,46 @@ namespace PathfindingFun
 
     public class BinaryHeap<T> where T : IComparable, IComparable<T>
     {
-        List<T> _Heap;
+        List<T> _heap;
 
         public BinaryHeap()
         {
-            _Heap = new List<T>();
+            _heap = new List<T>();
             // Add something to the start of the heap to make indexing more efficent
-            _Heap.Add(default(T));
+            _heap.Add(default(T));
         }
 
         ~BinaryHeap()
         {
-            _Heap.Clear();
+            _heap.Clear();
         }
 
-        public int Size()
-        {
-            return _Heap.Count - 1;
-        }
+        public int Size() => _heap.Count - 1;
+        
+        public bool IsEmpty() => (_heap.Count - 1 == 0);
+        
+        public bool Contains(T t) => _heap.Contains(t);
 
-        public bool IsEmpty()
-        {
-            return (_Heap.Count - 1 == 0);
-        }
-
-        public bool Contains(T t)
-        {
-            return _Heap.Contains(t);
-        }
-
-        public T Conatins2(T t)
-        {
-            return _Heap.FirstOrDefault(x => t.Equals(x));
-        }
+        public T Peek() => _heap[1];
 
         public void Clear()
         {
-            _Heap.Clear();
+            _heap.Clear();
             // Add something to the start of the heap to make indexing more efficent
-            _Heap.Add(default(T));
+            _heap.Add(default(T));
         }
 
         public void Insert(T t)
         {
-            _Heap.Add(t);
+            _heap.Add(t);
             int bubbleIndex = this.Size();
 
             while (bubbleIndex != 1)
             {
                 Int32 parentIndex = bubbleIndex / 2;
-                if (BinaryHeapExtension.IsLessThanOrEqual(_Heap[bubbleIndex], _Heap[parentIndex]))
+                if (BinaryHeapExtension.IsLessThanOrEqual(_heap[bubbleIndex], _heap[parentIndex]))
                 {
-                    BinaryHeapExtension.Swap(_Heap, parentIndex, bubbleIndex);
+                    BinaryHeapExtension.Swap(_heap, parentIndex, bubbleIndex);
                     bubbleIndex = parentIndex;
                 }
                 else
@@ -93,21 +79,16 @@ namespace PathfindingFun
             }
         }
 
-        public T Peek()
-        {
-            return _Heap[1];
-        }
-
         public T PopMin()
         {
-            if (_Heap.Count - 1 == 0)
+            if (_heap.Count - 1 == 0)
             {
                 return default(T);
             }
 
-            T smallest = _Heap[1];
-            BinaryHeapExtension.Swap(_Heap, 1, this.Size());
-            _Heap.RemoveAt(this.Size()); // Pop back
+            T smallest = _heap[1];
+            BinaryHeapExtension.Swap(_heap, 1, this.Size());
+            _heap.RemoveAt(this.Size()); // Pop back
 
             int swapItem = 1, parent = 1;
             do
@@ -116,11 +97,11 @@ namespace PathfindingFun
                 if ((2 * parent + 1) <= this.Size())
                 {
                     // Both children exist
-                    if (BinaryHeapExtension.IsGreaterThanOrEqual(_Heap[parent], _Heap[2 * parent]))
+                    if (BinaryHeapExtension.IsGreaterThanOrEqual(_heap[parent], _heap[2 * parent]))
                     {
                         swapItem = 2 * parent;
                     }
-                    if (BinaryHeapExtension.IsGreaterThanOrEqual(_Heap[swapItem], _Heap[2 * parent + 1]))
+                    if (BinaryHeapExtension.IsGreaterThanOrEqual(_heap[swapItem], _heap[2 * parent + 1]))
                     {
                         swapItem = 2 * parent + 1;
                     }
@@ -128,27 +109,25 @@ namespace PathfindingFun
                 else if ((2 * parent) <= this.Size())
                 {
                     // Only 1 child exists
-                    if (BinaryHeapExtension.IsGreaterThanOrEqual(_Heap[parent], _Heap[2 * parent]))
+                    if (BinaryHeapExtension.IsGreaterThanOrEqual(_heap[parent], _heap[2 * parent]))
                     {
                         swapItem = 2 * parent;
                     }
                 }
 
-                // One if the parent's children are smaller or equal, swap them
+                // One of the parent's children are smaller or equal, swap them
                 if (parent != swapItem)
                 {
-                    BinaryHeapExtension.Swap(_Heap, parent, swapItem);
+                    BinaryHeapExtension.Swap(_heap, parent, swapItem);
                 }
             } while (parent != swapItem);
 
             return smallest;
         }
 
-
         public override string ToString()
         {
-            return string.Join("\n", _Heap.Skip(1).ToArray());
+            return string.Join("\n", _heap.Skip(1).ToArray());
         }
     }
-
 }
