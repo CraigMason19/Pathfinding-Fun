@@ -57,6 +57,7 @@
     <Compile Include="Source\Forms\MazeLoadingForm.Designer.cs">
       <DependentUpon>MazeLoadingForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Source\Mouse.cs" />
     <Compile Include="Source\Helper.cs" />
     <Compile Include="Source\Forms\MainForm.cs">
       <SubType>Form</SubType>
@@ -64,7 +65,7 @@
     <Compile Include="Source\Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Source\Grid.cs" />
+    <Compile Include="Source\GridDisplay.cs" />
     <Compile Include="Source\Node.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

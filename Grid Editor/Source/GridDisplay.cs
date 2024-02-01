@@ -7,21 +7,20 @@ namespace PathfindingFun
     /// <summary>
     /// Class responsible for drawing the grid.
     /// </summary>
-    class Grid
+    class GridDisplay
     {
         public int HorizontalCells { get; set; }
         public int VerticalCells { get; set; }
         public Point Offset { get; set; }
         public Size CellSize { get; set; }        
 
-        public Grid()
+        public GridDisplay()
         {
             // Set some defaults
             Offset = new Point(0, 0);
             CellSize = new Size(10, 10);
             HorizontalCells = 1;
             VerticalCells = 1;
-
         }
 
         public virtual Point GetSquareScreenPosition(Point square)

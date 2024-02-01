@@ -1,50 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using PathfindingFun;
 
 // TODO
 // right click then left click bug
 // private variables have underscore
 // search nodes have parent nodes
 
-// Simply struct for simplicity and readability
-public struct Mouse
-{
-    public Point Local;
-    public Point Grid;
-    public Point LastPoint;
-    public bool Moved;
-
-    public string LocalSpaceString()
-    {
-        return string.Format("X: {0} , Y: {1}", Local.X, Local.Y);
-    }
-
-    public string GridSpaceString()
-    {
-        return string.Format("X: {0} , Y: {1}", Grid.X, Grid.Y);
-    }
-}
-
 namespace PathfindingFun
 {
-
     public partial class MainForm : Form
     {
         const KnownColor StartNodeColor = KnownColor.LimeGreen;
         const KnownColor EndNodeColor = KnownColor.Red;
         const KnownColor ConsideredNodeColor = KnownColor.PaleGreen;
         const KnownColor PathColor = KnownColor.Yellow;
+        const KnownColor WallColor = KnownColor.CornflowerBlue; 
 
-        Mouse M;
+        Mouse _mouse;
 
-        Grid LevelMap;
+        GridDisplay _gridDisplay;
         Size SmallGridSize;
         Size LargeGridSize;
         Size SmallPanelSize;
@@ -58,7 +35,6 @@ namespace PathfindingFun
         BinaryHeap<SearchNode> OpenHeap; // Faster as we don't constantly sort a list 
         HashSet<SearchNode> ClosedHash;  // Lookup for HashSet is O(1) and List is O(N)
                                          // Could always just add a boolean to the search node to show if it is on the closed list
-
         SearchNode[,] PathfindingGrid;
 
 
@@ -70,16 +46,16 @@ namespace PathfindingFun
             LargeGridSize = new Size(Convert.ToInt32(GridSizeUpDown.Value), Convert.ToInt32(GridSizeUpDown.Value));
             SmallPanelSize = new Size(600, 600);
 
-            LevelMap = new Grid();
-            LevelMap.CellSize = SmallGridSize;
-            LevelMap.HorizontalCells = 20;
-            LevelMap.VerticalCells = 20;
+            _gridDisplay = new GridDisplay();
+            _gridDisplay.CellSize = SmallGridSize;
+            _gridDisplay.HorizontalCells = 20;
+            _gridDisplay.VerticalCells = 20;
 
-            M = new Mouse();
-            M.Local = new Point(0, 0);
-            M.Grid = new Point(0, 0);
-            M.LastPoint = new Point(-1, -1);
-            M.Moved = false;
+            _mouse = new Mouse();
+            _mouse.Local = new Point(0, 0);
+            _mouse.Grid = new Point(0, 0);
+            _mouse.LastPoint = new Point(-1, -1);
+            _mouse.Moved = false;
 
             HeuristicComboBox.SelectedIndex = 0;
 
@@ -100,10 +76,10 @@ namespace PathfindingFun
             OpenHeap = new BinaryHeap<SearchNode>();
             ClosedHash = new HashSet<SearchNode>(new CustomNodeComparer());
 
-            PathfindingGrid = new SearchNode[LevelMap.HorizontalCells, LevelMap.VerticalCells];
-            for (int x = 0; x < LevelMap.HorizontalCells; x++)
+            PathfindingGrid = new SearchNode[_gridDisplay.HorizontalCells, _gridDisplay.VerticalCells];
+            for (int x = 0; x < _gridDisplay.HorizontalCells; x++)
             {
-                for (int y = 0; y < LevelMap.VerticalCells; y++)
+                for (int y = 0; y < _gridDisplay.VerticalCells; y++)
                 {
                     PathfindingGrid[x, y] = new SearchNode(x, y);
                 }
@@ -114,7 +90,7 @@ namespace PathfindingFun
         {
             if (SmallGridButton.Checked)
             {
-                LevelMap.Draw(e.Graphics, M.Local);
+                _gridDisplay.Draw(e.Graphics, _mouse.Local);
             }
         }
 
@@ -123,16 +99,16 @@ namespace PathfindingFun
             //MouseLocal = Panel1.PointToClient(Cursor.Position);
             //MouseScreenTextBox.Text = string.Format("X: {0} , Y: {1}", MouseLocal.X, MouseLocal.Y);
 
-            M.Local = Panel1.PointToClient(Cursor.Position);
-            MouseScreenTextBox.Text = M.LocalSpaceString();
+            _mouse.Local = Panel1.PointToClient(Cursor.Position);
+            MouseScreenTextBox.Text = _mouse.LocalSpaceString();
 
             //MouseGrid.X = (MouseLocal.X / LevelMap.CellSize.Width);
             //MouseGrid.Y = (MouseLocal.Y / LevelMap.CellSize.Height);
             //MouseGridTextBox.Text = string.Format("X: {0} , Y: {1}", MouseGrid.X, MouseGrid.Y);
 
-            M.Grid.X = (M.Local.X / LevelMap.CellSize.Width);
-            M.Grid.Y = (M.Local.Y / LevelMap.CellSize.Height);
-            MouseGridTextBox.Text = M.GridSpaceString();
+            _mouse.Grid.X = (_mouse.Local.X / _gridDisplay.CellSize.Width);
+            _mouse.Grid.Y = (_mouse.Local.Y / _gridDisplay.CellSize.Height);
+            MouseGridTextBox.Text = _mouse.GridSpaceString();
 
             //if (MouseGrid != LastPoint)
             //{
@@ -144,32 +120,25 @@ namespace PathfindingFun
             //}
             //LastPoint = MouseGrid;
 
-            if (M.Grid != M.LastPoint)
+            if (_mouse.Grid != _mouse.LastPoint)
             {
-                M.Moved = true;
+                _mouse.Moved = true;
             }
             else
             {
-                M.Moved = false;
+                _mouse.Moved = false;
             }
-            M.LastPoint = M.Grid;
+            _mouse.LastPoint = _mouse.Grid;
 
-            //if (MouseMoved && e.Button == MouseButtons.Left)
-            //{
-            //    if (Helper.IsInRange(0, LevelMap.HorizontalCells - 1, MouseGrid.X) &&
-            //        Helper.IsInRange(0, LevelMap.VerticalCells - 1, MouseGrid.Y))
-            //    {
-            //        LevelMap.ColourSquare(Panel1.CreateGraphics(), MouseGrid, Color.CornflowerBlue);
-            //        PathfindingGrid[MouseGrid.X, MouseGrid.Y]._Walkable = false;
-            //    }
-            //}
-            if (M.Moved && e.Button == MouseButtons.Left)
+
+            // If the left mouse button is clicked, can draw extra walls.
+            if (_mouse.Moved && e.Button == MouseButtons.Left)
             {
-                if (Helper.IsInRange(0, LevelMap.HorizontalCells - 1, M.Grid.X) &&
-                    Helper.IsInRange(0, LevelMap.VerticalCells - 1, M.Grid.Y))
+                if (Helper.IsInRange(0, _gridDisplay.HorizontalCells - 1, _mouse.Grid.X) &&
+                    Helper.IsInRange(0, _gridDisplay.VerticalCells - 1, _mouse.Grid.Y))
                 {
-                    LevelMap.ColourSquare(Panel1.CreateGraphics(), M.Grid, Color.CornflowerBlue);
-                    PathfindingGrid[M.Grid.X, M.Grid.Y]._Walkable = false;
+                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, Color.FromKnownColor(WallColor));
+                    PathfindingGrid[_mouse.Grid.X, _mouse.Grid.Y]._Walkable = false;
                 }
             }
         }
@@ -189,11 +158,11 @@ namespace PathfindingFun
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
                 // Need to draw the first square         
-                if (Helper.IsInRange(0, LevelMap.HorizontalCells - 1, M.Grid.X) &&
-                    Helper.IsInRange(0, LevelMap.VerticalCells - 1, M.Grid.Y))
+                if (Helper.IsInRange(0, _gridDisplay.HorizontalCells - 1, _mouse.Grid.X) &&
+                    Helper.IsInRange(0, _gridDisplay.VerticalCells - 1, _mouse.Grid.Y))
                 {
-                    LevelMap.ColourSquare(Panel1.CreateGraphics(), M.Grid, Color.CornflowerBlue);
-                    PathfindingGrid[M.Grid.X, M.Grid.Y]._Walkable = false;
+                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, Color.CornflowerBlue);
+                    PathfindingGrid[_mouse.Grid.X, _mouse.Grid.Y]._Walkable = false;
                 }
             }
         }
@@ -208,35 +177,35 @@ namespace PathfindingFun
                 m.MenuItems[0].Click += new System.EventHandler(this.StartSearchNode_Click);
                 m.MenuItems[1].Click += new System.EventHandler(this.EndSearchNode_Click);
                 //m.Show(Panel1, MouseLocal);
-                m.Show(Panel1, M.Local);
+                m.Show(Panel1, _mouse.Local);
             }
         }
 
         private void StartSearchNode_Click(object sender, System.EventArgs e)
         {
-            LevelMap.ColourSquare(Panel1.CreateGraphics(), StartSearchNode.ToPoint(), Color.White);
-            LevelMap.ColourSquare(Panel1.CreateGraphics(), M.Grid, Color.FromKnownColor(StartNodeColor));
-            StartSearchNode = new SearchNode(M.Grid, 0);
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), StartSearchNode.ToPoint(), Color.White);
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, Color.FromKnownColor(StartNodeColor));
+            StartSearchNode = new SearchNode(_mouse.Grid, 0);
             OpenHeap.Clear();
             OpenHeap.Insert(StartSearchNode);
             PathfindingGrid[StartSearchNode._Pos.X, StartSearchNode._Pos.Y]._Walkable = true;
             // Redraw grid otherwise it is ugly
             if (SmallGridButton.Checked)
             {
-                LevelMap.Draw(Panel1.CreateGraphics(), M.Local);
+                _gridDisplay.Draw(Panel1.CreateGraphics(), _mouse.Local);
             }
         }
 
         private void EndSearchNode_Click(object sender, System.EventArgs e)
         {
-            LevelMap.ColourSquare(Panel1.CreateGraphics(), EndSearchNode.ToPoint(), Color.White);
-            LevelMap.ColourSquare(Panel1.CreateGraphics(), M.Grid, Color.FromKnownColor(EndNodeColor));
-            EndSearchNode = new SearchNode(M.Grid, 0);
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode.ToPoint(), Color.White);
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, Color.FromKnownColor(EndNodeColor));
+            EndSearchNode = new SearchNode(_mouse.Grid, 0);
             PathfindingGrid[EndSearchNode._Pos.X, EndSearchNode._Pos.Y]._Walkable = true;
             // Redraw grid otherwise it is ugly TODO
             if (SmallGridButton.Checked)
             {
-                LevelMap.Draw(Panel1.CreateGraphics(), M.Local);
+                _gridDisplay.Draw(Panel1.CreateGraphics(), _mouse.Local);
             }
         }
 
@@ -258,11 +227,11 @@ namespace PathfindingFun
                         Point p = PathfindingGrid[current._Pos.X, current._Pos.Y]._Parent;// _Pos;
                         while (!(p == StartSearchNode._Pos))
                         {
-                            LevelMap.ColourSquare(Panel1.CreateGraphics(), p, Color.FromKnownColor(PathColor));
+                            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), p, Color.FromKnownColor(PathColor));
                             p = PathfindingGrid[p.X, p.Y]._Parent;
                         }
 
-                        LevelMap.ColourSquare(Panel1.CreateGraphics(), EndSearchNode._Pos, Color.FromKnownColor(EndNodeColor));
+                        _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode._Pos, Color.FromKnownColor(EndNodeColor));
                         
                         break;
                     }
@@ -336,10 +305,10 @@ namespace PathfindingFun
                             // Draw considered nodes
                             if (DrawOpenlistCheckBox.Checked)
                             {
-                                LevelMap.ColourSquare(Panel1.CreateGraphics(), tmp._Pos, Color.FromKnownColor(ConsideredNodeColor));
+                                _gridDisplay.ColourSquare(Panel1.CreateGraphics(), tmp._Pos, Color.FromKnownColor(ConsideredNodeColor));
                                 if (SmallGridButton.Checked) // Drawing costs on large map would be pointless,
                                 {                            // also costs are drawn as ints (because it is easier to see)
-                                    LevelMap.DrawCosts(Panel1.CreateGraphics(), tmp._Pos, tmp._G, tmp._H);
+                                    _gridDisplay.DrawCosts(Panel1.CreateGraphics(), tmp._Pos, tmp._G, tmp._H);
                                 }
                             }
 
@@ -380,15 +349,15 @@ namespace PathfindingFun
 
         private void SmallGridButton_CheckedChanged(object sender, EventArgs e)
         {
-            LevelMap = new Grid();
-            LevelMap.CellSize = SmallGridSize;
-            LevelMap.HorizontalCells = Panel1.Width / SmallGridSize.Width;
-            LevelMap.VerticalCells = Panel1.Height / SmallGridSize.Height;
+            _gridDisplay = new GridDisplay();
+            _gridDisplay.CellSize = SmallGridSize;
+            _gridDisplay.HorizontalCells = Panel1.Width / SmallGridSize.Width;
+            _gridDisplay.VerticalCells = Panel1.Height / SmallGridSize.Height;
 
-            PathfindingGrid = new SearchNode[LevelMap.HorizontalCells, LevelMap.VerticalCells];
-            for (int x = 0; x < LevelMap.HorizontalCells; x++)
+            PathfindingGrid = new SearchNode[_gridDisplay.HorizontalCells, _gridDisplay.VerticalCells];
+            for (int x = 0; x < _gridDisplay.HorizontalCells; x++)
             {
-                for (int y = 0; y < LevelMap.VerticalCells; y++)
+                for (int y = 0; y < _gridDisplay.VerticalCells; y++)
                 {
                     PathfindingGrid[x, y] = new SearchNode(x, y);
                 }
@@ -399,15 +368,15 @@ namespace PathfindingFun
 
         private void LargeGridButton_CheckedChanged(object sender, EventArgs e)
         {
-            LevelMap = new Grid();
-            LevelMap.CellSize = new Size(LargeGridSize.Width, LargeGridSize.Height);
-            LevelMap.HorizontalCells = Panel1.Width / LargeGridSize.Width;
-            LevelMap.VerticalCells = Panel1.Height / LargeGridSize.Height;
+            _gridDisplay = new GridDisplay();
+            _gridDisplay.CellSize = new Size(LargeGridSize.Width, LargeGridSize.Height);
+            _gridDisplay.HorizontalCells = Panel1.Width / LargeGridSize.Width;
+            _gridDisplay.VerticalCells = Panel1.Height / LargeGridSize.Height;
 
-            PathfindingGrid = new SearchNode[LevelMap.HorizontalCells, LevelMap.VerticalCells];
-            for (int x = 0; x < LevelMap.HorizontalCells; x++)
+            PathfindingGrid = new SearchNode[_gridDisplay.HorizontalCells, _gridDisplay.VerticalCells];
+            for (int x = 0; x < _gridDisplay.HorizontalCells; x++)
             {
-                for (int y = 0; y < LevelMap.VerticalCells; y++)
+                for (int y = 0; y < _gridDisplay.VerticalCells; y++)
                 {
                     PathfindingGrid[x, y] = new SearchNode(x, y);
                 }
@@ -419,17 +388,17 @@ namespace PathfindingFun
         private void ResetButton_Click(object sender, EventArgs e)
         {
             Panel1.Refresh();
-            LevelMap.ColourSquare(Panel1.CreateGraphics(), StartSearchNode._Pos, Color.FromKnownColor(StartNodeColor));
-            LevelMap.ColourSquare(Panel1.CreateGraphics(), EndSearchNode._Pos, Color.FromKnownColor(EndNodeColor));
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), StartSearchNode._Pos, Color.FromKnownColor(StartNodeColor));
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode._Pos, Color.FromKnownColor(EndNodeColor));
 
-            for (int x = 0; x < LevelMap.HorizontalCells; x++)
+            for (int x = 0; x < _gridDisplay.HorizontalCells; x++)
             {
-                for (int y = 0; y < LevelMap.VerticalCells; y++)
+                for (int y = 0; y < _gridDisplay.VerticalCells; y++)
                 {
                     SearchNode tmp = PathfindingGrid[x, y];
                     if (tmp._Walkable == false)
                     {
-                        LevelMap.ColourSquare(Panel1.CreateGraphics(), tmp._Pos, Color.CornflowerBlue);
+                        _gridDisplay.ColourSquare(Panel1.CreateGraphics(), tmp._Pos, Color.CornflowerBlue);
                     }
                 }
             }
@@ -461,7 +430,7 @@ namespace PathfindingFun
                 n._Walkable = (r.Next(100) > RandomnessBar.Value);
                 if (!n._Walkable)
                 {
-                    LevelMap.ColourSquare(Panel1.CreateGraphics(), n._Pos, Color.CornflowerBlue);
+                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), n._Pos, Color.CornflowerBlue);
                 }
             }
         }
@@ -563,8 +532,8 @@ namespace PathfindingFun
             // 2. Pick a cell, mark it as part of the maze. Add the walls of the cell
             // to the wall list
             // opposite = (1,1);
-            int a = rnd.Next(LevelMap.HorizontalCells / 2 - 1);
-            int b = rnd.Next(LevelMap.VerticalCells / 2 - 1);
+            int a = rnd.Next(_gridDisplay.HorizontalCells / 2 - 1);
+            int b = rnd.Next(_gridDisplay.VerticalCells / 2 - 1);
             MazeNode passage = new MazeNode(a, b);
             MazeNode opposite = new MazeNode(a, b);
             PathfindingGrid[opposite._X, opposite._Y]._Walkable = true;
@@ -647,7 +616,7 @@ namespace PathfindingFun
             {
                 if (!n._Walkable)
                 {
-                    LevelMap.ColourSquare(Panel1.CreateGraphics(), n._Pos, Color.CornflowerBlue);
+                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), n._Pos, Color.CornflowerBlue);
                 }
             }            
         }
