@@ -13,13 +13,6 @@ namespace PathfindingFun
 {
     public partial class MainForm : Form
     {
-        // Colors
-        const KnownColor StartNodeColor = KnownColor.LimeGreen;
-        const KnownColor EndNodeColor = KnownColor.Red;
-        const KnownColor ConsideredNodeColor = KnownColor.PaleGreen;
-        const KnownColor PathColor = KnownColor.Yellow;
-        const KnownColor WallColor = KnownColor.DarkBlue; 
-
         // General
         Mouse _mouse;
         int LastNumericUpDown;
@@ -137,7 +130,7 @@ namespace PathfindingFun
                 if (Helper.IsInRange(0, _gridDisplay.Dimensions.Width - 1, _mouse.Grid.X) &&
                     Helper.IsInRange(0, _gridDisplay.Dimensions.Height - 1, _mouse.Grid.Y))
                 {
-                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, Color.FromKnownColor(WallColor));
+                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, ProjectColors.Wall);
                     PathfindingGrid[_mouse.Grid.X, _mouse.Grid.Y]._Walkable = false;
                 }
             }
@@ -151,7 +144,7 @@ namespace PathfindingFun
                 if (Helper.IsInRange(0, _gridDisplay.Dimensions.Width - 1, _mouse.Grid.X) &&
                     Helper.IsInRange(0, _gridDisplay.Dimensions.Height - 1, _mouse.Grid.Y))
                 {
-                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, Color.FromKnownColor(WallColor));
+                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, ProjectColors.Wall);
                     PathfindingGrid[_mouse.Grid.X, _mouse.Grid.Y]._Walkable = false;
                 }
             }
@@ -174,7 +167,7 @@ namespace PathfindingFun
         private void StartSearchNode_Click(object sender, System.EventArgs e)
         {
             _gridDisplay.ColourSquare(Panel1.CreateGraphics(), StartSearchNode.ToPoint(), Color.White);
-            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, Color.FromKnownColor(StartNodeColor));
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, ProjectColors.StartNode);
             StartSearchNode = new SearchNode(_mouse.Grid, 0);
             OpenHeap.Clear();
             OpenHeap.Insert(StartSearchNode);
@@ -184,7 +177,7 @@ namespace PathfindingFun
         private void EndSearchNode_Click(object sender, System.EventArgs e)
         {
             _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode.ToPoint(), Color.White);
-            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, Color.FromKnownColor(EndNodeColor));
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, ProjectColors.EndNode);
             EndSearchNode = new SearchNode(_mouse.Grid, 0);
             PathfindingGrid[EndSearchNode._Pos.X, EndSearchNode._Pos.Y]._Walkable = true;
         }
@@ -207,11 +200,11 @@ namespace PathfindingFun
                         Point p = PathfindingGrid[current._Pos.X, current._Pos.Y]._Parent;// _Pos;
                         while (!(p == StartSearchNode._Pos))
                         {
-                            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), p, Color.FromKnownColor(PathColor));
+                            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), p, ProjectColors.Path);
                             p = PathfindingGrid[p.X, p.Y]._Parent;
                         }
 
-                        _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode._Pos, Color.FromKnownColor(EndNodeColor));
+                        _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode._Pos, ProjectColors.EndNode);
                         
                         break;
                     }
@@ -285,7 +278,7 @@ namespace PathfindingFun
                             // Draw considered nodes
                             if (DrawOpenlistCheckBox.Checked)
                             {
-                                _gridDisplay.ColourSquare(Panel1.CreateGraphics(), tmp._Pos, Color.FromKnownColor(ConsideredNodeColor));
+                                _gridDisplay.ColourSquare(Panel1.CreateGraphics(), tmp._Pos, ProjectColors.ConsideredNode);
                                 if (SmallGridButton.Checked) // Drawing costs on large map would be pointless,
                                 {                            // also costs are drawn as ints (because it is easier to see)
                                     _gridDisplay.DrawCosts(Panel1.CreateGraphics(), tmp._Pos, tmp._G, tmp._H);
@@ -366,8 +359,8 @@ namespace PathfindingFun
         private void ResetButton_Click(object sender, EventArgs e)
         {
             Panel1.Refresh();
-            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), StartSearchNode._Pos, Color.FromKnownColor(StartNodeColor));
-            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode._Pos, Color.FromKnownColor(EndNodeColor));
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), StartSearchNode._Pos, ProjectColors.StartNode);
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode._Pos, ProjectColors.EndNode);
 
             for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
             {
@@ -376,7 +369,7 @@ namespace PathfindingFun
                     SearchNode tmp = PathfindingGrid[x, y];
                     if (tmp._Walkable == false)
                     {
-                        _gridDisplay.ColourSquare(Panel1.CreateGraphics(), tmp._Pos, Color.FromKnownColor(WallColor));
+                        _gridDisplay.ColourSquare(Panel1.CreateGraphics(), tmp._Pos, ProjectColors.Wall);
                     }
                 }
             }
@@ -408,7 +401,7 @@ namespace PathfindingFun
                 n._Walkable = (r.Next(100) > RandomnessBar.Value);
                 if (!n._Walkable)
                 {
-                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), n._Pos, Color.FromKnownColor(WallColor));
+                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), n._Pos, ProjectColors.Wall);
                 }
             }
         }
@@ -594,7 +587,7 @@ namespace PathfindingFun
             {
                 if (!n._Walkable)
                 {
-                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), n._Pos, Color.FromKnownColor(WallColor));
+                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), n._Pos, ProjectColors.Wall);
                 }
             }            
         }

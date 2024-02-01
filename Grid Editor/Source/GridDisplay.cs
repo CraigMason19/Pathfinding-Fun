@@ -34,7 +34,7 @@ namespace PathfindingFun
 
         public virtual void Draw(Graphics Graf, Point mouse)
         {
-            Pen pencil = new Pen(Color.CornflowerBlue, 2f);
+            Pen pencil = new Pen(ProjectColors.GridLines, 2f);
             pencil.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
             pencil.DashCap = System.Drawing.Drawing2D.DashCap.Triangle;
 
@@ -65,7 +65,7 @@ namespace PathfindingFun
         public void DrawCosts(Graphics graph, Point square, int g, float h)
         {
             Font drawFont = new Font("Arial", 6, FontStyle.Bold);
-            SolidBrush drawBrush = new SolidBrush(Color.Black);
+            SolidBrush drawBrush = new SolidBrush(ProjectColors.Text);
 
             Point tmp = GetSquareScreenPosition(square);
 
