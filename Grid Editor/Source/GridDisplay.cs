@@ -31,7 +31,7 @@ namespace PathfindingFun
             graphics.FillRectangle(new SolidBrush(colour), new Rectangle(GetSquareScreenPosition(square), new Size(CellSize, CellSize)));
         }
 
-        public virtual void DrawGridLines(Graphics graphics, Point mouse)
+        public virtual void DrawGridLines(Graphics graphics)
         {
             Pen pencil = new Pen(ProjectColors.GridLines, 2f)
             {
