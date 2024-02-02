@@ -39,6 +39,8 @@
             this.SmallGridButton = new System.Windows.Forms.RadioButton();
             this.LargeGridButton = new System.Windows.Forms.RadioButton();
             this.GridGroupBox = new System.Windows.Forms.GroupBox();
+            this.CellCountLabel = new System.Windows.Forms.Label();
+            this.CellCountTextBox = new System.Windows.Forms.TextBox();
             this.GridSizeLabel = new System.Windows.Forms.Label();
             this.GridSizeTextBox = new System.Windows.Forms.TextBox();
             this.PixelSizeLabel = new System.Windows.Forms.Label();
@@ -51,17 +53,15 @@
             this.ResetButton = new System.Windows.Forms.Button();
             this.DiagonalCheckBox = new System.Windows.Forms.CheckBox();
             this.AIGroupBox = new System.Windows.Forms.GroupBox();
+            this.ConsideredNodeLengthTextBox = new System.Windows.Forms.TextBox();
             this.ConsideredNodeLengthLabel = new System.Windows.Forms.Label();
             this.TieBreakerCheckBox = new System.Windows.Forms.CheckBox();
-            this.ConsideredNodeLengthTextBox = new System.Windows.Forms.TextBox();
             this.UseGCheckBox = new System.Windows.Forms.CheckBox();
             this.PathLengthLabel = new System.Windows.Forms.Label();
             this.DrawOpenlistCheckBox = new System.Windows.Forms.CheckBox();
             this.PathLengthTextBox = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.HeuristicComboBox = new System.Windows.Forms.ComboBox();
-            this.CellCountLabel = new System.Windows.Forms.Label();
-            this.CellCountTextBox = new System.Windows.Forms.TextBox();
             this.MouseGroupBox.SuspendLayout();
             this.GridGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.GridSizeUpDown)).BeginInit();
@@ -131,7 +131,8 @@
             // 
             // RunAIButton
             // 
-            this.RunAIButton.Location = new System.Drawing.Point(9, 564);
+            this.RunAIButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.RunAIButton.Location = new System.Drawing.Point(9, 535);
             this.RunAIButton.Name = "RunAIButton";
             this.RunAIButton.Size = new System.Drawing.Size(182, 23);
             this.RunAIButton.TabIndex = 4;
@@ -141,6 +142,7 @@
             // 
             // ClearButton
             // 
+            this.ClearButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ClearButton.Location = new System.Drawing.Point(9, 593);
             this.ClearButton.Name = "ClearButton";
             this.ClearButton.Size = new System.Drawing.Size(182, 23);
@@ -197,6 +199,23 @@
             this.GridGroupBox.TabIndex = 8;
             this.GridGroupBox.TabStop = false;
             this.GridGroupBox.Text = "Grid";
+            // 
+            // CellCountLabel
+            // 
+            this.CellCountLabel.AutoSize = true;
+            this.CellCountLabel.Location = new System.Drawing.Point(7, 67);
+            this.CellCountLabel.Name = "CellCountLabel";
+            this.CellCountLabel.Size = new System.Drawing.Size(58, 13);
+            this.CellCountLabel.TabIndex = 18;
+            this.CellCountLabel.Text = "Cell Count:";
+            // 
+            // CellCountTextBox
+            // 
+            this.CellCountTextBox.Location = new System.Drawing.Point(73, 64);
+            this.CellCountTextBox.Name = "CellCountTextBox";
+            this.CellCountTextBox.Size = new System.Drawing.Size(100, 20);
+            this.CellCountTextBox.TabIndex = 17;
+            this.CellCountTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // GridSizeLabel
             // 
@@ -298,7 +317,8 @@
             // 
             // ResetButton
             // 
-            this.ResetButton.Location = new System.Drawing.Point(9, 535);
+            this.ResetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ResetButton.Location = new System.Drawing.Point(9, 564);
             this.ResetButton.Name = "ResetButton";
             this.ResetButton.Size = new System.Drawing.Size(182, 23);
             this.ResetButton.TabIndex = 9;
@@ -337,6 +357,14 @@
             this.AIGroupBox.TabStop = false;
             this.AIGroupBox.Text = "AI";
             // 
+            // ConsideredNodeLengthTextBox
+            // 
+            this.ConsideredNodeLengthTextBox.Location = new System.Drawing.Point(77, 175);
+            this.ConsideredNodeLengthTextBox.Name = "ConsideredNodeLengthTextBox";
+            this.ConsideredNodeLengthTextBox.Size = new System.Drawing.Size(96, 20);
+            this.ConsideredNodeLengthTextBox.TabIndex = 19;
+            this.ConsideredNodeLengthTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
             // ConsideredNodeLengthLabel
             // 
             this.ConsideredNodeLengthLabel.AutoSize = true;
@@ -357,14 +385,6 @@
             this.TieBreakerCheckBox.TabIndex = 14;
             this.TieBreakerCheckBox.Text = "Use Tie Breaker?";
             this.TieBreakerCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // ConsideredNodeLengthTextBox
-            // 
-            this.ConsideredNodeLengthTextBox.Location = new System.Drawing.Point(77, 175);
-            this.ConsideredNodeLengthTextBox.Name = "ConsideredNodeLengthTextBox";
-            this.ConsideredNodeLengthTextBox.Size = new System.Drawing.Size(96, 20);
-            this.ConsideredNodeLengthTextBox.TabIndex = 19;
-            this.ConsideredNodeLengthTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // UseGCheckBox
             // 
@@ -431,23 +451,6 @@
             this.HeuristicComboBox.TabIndex = 0;
             this.HeuristicComboBox.ValueMember = "Manhatten";
             this.HeuristicComboBox.SelectedValueChanged += new System.EventHandler(this.HeuristicComboBox_SelectedValueChanged);
-            // 
-            // CellCountLabel
-            // 
-            this.CellCountLabel.AutoSize = true;
-            this.CellCountLabel.Location = new System.Drawing.Point(7, 67);
-            this.CellCountLabel.Name = "CellCountLabel";
-            this.CellCountLabel.Size = new System.Drawing.Size(58, 13);
-            this.CellCountLabel.TabIndex = 18;
-            this.CellCountLabel.Text = "Cell Count:";
-            // 
-            // CellCountTextBox
-            // 
-            this.CellCountTextBox.Location = new System.Drawing.Point(73, 64);
-            this.CellCountTextBox.Name = "CellCountTextBox";
-            this.CellCountTextBox.Size = new System.Drawing.Size(100, 20);
-            this.CellCountTextBox.TabIndex = 17;
-            this.CellCountTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // MainForm
             // 

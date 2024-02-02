@@ -19,7 +19,7 @@ namespace PathfindingFun
 
         // Grid
         GridDisplay _gridDisplay;
-        int _smallGridSize;
+        int _smallGridSize; // The pixel size of a cell in the small grid
         int _largeGridSize;
         Size _smallPanelSize; // The size in pixels when minimized
          
@@ -35,10 +35,14 @@ namespace PathfindingFun
         public MainForm()
         {
             InitializeComponent();
+
             // Form setup
             HeuristicComboBox.SelectedIndex = 0;
             ResetAILabels();
+            Panel1.BackColor = ProjectColors.Clear;
+            this.MinimumSize = this.Size;
 
+            // Grid setup
             _smallGridSize = 30;
             LastNumericUpDown = Convert.ToInt32(GridSizeUpDown.Value);
             _largeGridSize = Convert.ToInt32(GridSizeUpDown.Value);
@@ -85,8 +89,6 @@ namespace PathfindingFun
 
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
-            Panel1.BackColor = ProjectColors.Clear;
-
             if (SmallGridButton.Checked)
             {
                 _gridDisplay.DrawGridLines(e.Graphics);
