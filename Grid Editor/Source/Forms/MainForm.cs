@@ -35,6 +35,10 @@ namespace PathfindingFun
         public MainForm()
         {
             InitializeComponent();
+            // Form setup
+            HeuristicComboBox.SelectedIndex = 0;
+            ResetAILabels();
+
             _smallGridSize = 30;
             LastNumericUpDown = Convert.ToInt32(GridSizeUpDown.Value);
             _largeGridSize = Convert.ToInt32(GridSizeUpDown.Value);
@@ -50,8 +54,6 @@ namespace PathfindingFun
             _mouse.Grid = new Point(0, 0);
             _mouse.LastPoint = new Point(-1, -1);
             _mouse.Moved = false;
-
-            HeuristicComboBox.SelectedIndex = 0;
 
             // SearchNode setup
             StartSearchNode = SearchNode.OutOfIndexNode;
@@ -197,6 +199,9 @@ namespace PathfindingFun
 
         private void RunAI_Click(object sender, EventArgs e)
         {
+            int pathLength = 0;
+            int consideredNodesCount = 0;
+
             SearchNode current = SearchNode.OutOfIndexNode;
 
             // Have we got a start and a destination?
@@ -209,16 +214,21 @@ namespace PathfindingFun
                     // Finished!?
                     if (current == EndSearchNode)
                     {
-                        // TODO double check why need draw end
                         Point p = PathfindingGrid[current._Pos.X, current._Pos.Y]._Parent;// _Pos;
                         while (!(p == StartSearchNode._Pos))
                         {
                             _gridDisplay.ColourSquare(Panel1.CreateGraphics(), p, ProjectColors.Path);
                             p = PathfindingGrid[p.X, p.Y]._Parent;
+                            pathLength++;
                         }
 
+                        // Redraw the end node as it was put onto the considered nodes list 
                         _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode._Pos, ProjectColors.EndNode);
-                        
+
+                        // Need to add one to the pathLength because the end node counts as part of the path
+                        PathLengthTextBox.Text = (pathLength + 1).ToString(); 
+                        ConsideredNodeLengthTextBox.Text = (consideredNodesCount - (pathLength + 1)).ToString();
+
                         break;
                     }
 
@@ -288,6 +298,8 @@ namespace PathfindingFun
                                 tmp._H += AI.GetTieBreakerScale(tmp._Pos, StartSearchNode._Pos, EndSearchNode._Pos);
                             }
 
+                            consideredNodesCount++;
+
                             // Draw considered nodes
                             if (DrawOpenlistCheckBox.Checked)
                             {
@@ -296,7 +308,6 @@ namespace PathfindingFun
                                 {                            // also costs are drawn as ints (because it is easier to see)
                                     _gridDisplay.DrawCosts(Panel1.CreateGraphics(), tmp._Pos, tmp._G, tmp._H);
                                 }
-
                             }
 
                             if (!OpenHeap.Contains(tmp))
@@ -346,8 +357,8 @@ namespace PathfindingFun
             _gridDisplay.CellSize = _smallGridSize;
             _gridDisplay.Dimensions = new Size(Panel1.Width / _smallGridSize, Panel1.Height / _smallGridSize);
 
-            PixelSizeTextBox.Text = string.Format("{0} x {1}", Panel1.Size.Width, Panel1.Size.Height);
-            GridSizeTextBox.Text = string.Format("{0} x {1}", _gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height);
+            UpdateGridLabels();
+            ResetAILabels();
 
             PathfindingGrid = new SearchNode[_gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height];
             for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
@@ -361,11 +372,21 @@ namespace PathfindingFun
             Clear();
         }
 
+        #region Labels
+        
         private void UpdateGridLabels()
         {
             PixelSizeTextBox.Text = string.Format("{0} x {1}", Panel1.Size.Width, Panel1.Size.Height);
             GridSizeTextBox.Text = string.Format("{0} x {1}", _gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height);
         }
+
+        private void ResetAILabels()
+        {
+            PathLengthTextBox.Text = "N/A";
+            ConsideredNodeLengthTextBox.Text = "N/A";
+        }
+        
+        #endregion
 
         private void LargeGridButton_CheckedChanged(object sender, EventArgs e)
         {
@@ -374,7 +395,7 @@ namespace PathfindingFun
             _gridDisplay.Dimensions = new Size(Panel1.Width / _largeGridSize, Panel1.Height / _largeGridSize);
 
             UpdateGridLabels();
-
+            ResetAILabels();
 
             PathfindingGrid = new SearchNode[_gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height];
             for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
@@ -395,6 +416,8 @@ namespace PathfindingFun
             _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode._Pos, ProjectColors.EndNode);
 
             UpdateGridLabels();
+            ResetAILabels();
+
 
             for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
             {
@@ -444,6 +467,8 @@ namespace PathfindingFun
 
         private void Form1_Resize(object sender, EventArgs e)
         {
+            ResetAILabels();
+
             switch (this.WindowState)
             {
                 case FormWindowState.Maximized:

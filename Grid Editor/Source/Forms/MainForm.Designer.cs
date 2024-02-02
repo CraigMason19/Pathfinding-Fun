@@ -39,6 +39,10 @@
             this.SmallGridButton = new System.Windows.Forms.RadioButton();
             this.LargeGridButton = new System.Windows.Forms.RadioButton();
             this.GridGroupBox = new System.Windows.Forms.GroupBox();
+            this.GridSizeLabel = new System.Windows.Forms.Label();
+            this.GridSizeTextBox = new System.Windows.Forms.TextBox();
+            this.PixelSizeLabel = new System.Windows.Forms.Label();
+            this.PixelSizeTextBox = new System.Windows.Forms.TextBox();
             this.RandomMazeButton = new System.Windows.Forms.Button();
             this.GridSizeUpDown = new System.Windows.Forms.NumericUpDown();
             this.WallDensityLabel = new System.Windows.Forms.Label();
@@ -47,15 +51,15 @@
             this.ResetButton = new System.Windows.Forms.Button();
             this.DiagonalCheckBox = new System.Windows.Forms.CheckBox();
             this.AIGroupBox = new System.Windows.Forms.GroupBox();
+            this.ConsideredNodeLengthLabel = new System.Windows.Forms.Label();
             this.TieBreakerCheckBox = new System.Windows.Forms.CheckBox();
+            this.ConsideredNodeLengthTextBox = new System.Windows.Forms.TextBox();
             this.UseGCheckBox = new System.Windows.Forms.CheckBox();
+            this.PathLengthLabel = new System.Windows.Forms.Label();
             this.DrawOpenlistCheckBox = new System.Windows.Forms.CheckBox();
+            this.PathLengthTextBox = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.HeuristicComboBox = new System.Windows.Forms.ComboBox();
-            this.PixelSizeLabel = new System.Windows.Forms.Label();
-            this.PixelSizeTextBox = new System.Windows.Forms.TextBox();
-            this.GridSizeLabel = new System.Windows.Forms.Label();
-            this.GridSizeTextBox = new System.Windows.Forms.TextBox();
             this.MouseGroupBox.SuspendLayout();
             this.GridGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.GridSizeUpDown)).BeginInit();
@@ -82,13 +86,15 @@
             this.MouseScreenTextBox.Name = "MouseScreenTextBox";
             this.MouseScreenTextBox.Size = new System.Drawing.Size(100, 20);
             this.MouseScreenTextBox.TabIndex = 1;
+            this.MouseScreenTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // MouseGridTextBox
             // 
-            this.MouseGridTextBox.Location = new System.Drawing.Point(72, 38);
+            this.MouseGridTextBox.Location = new System.Drawing.Point(72, 42);
             this.MouseGridTextBox.Name = "MouseGridTextBox";
             this.MouseGridTextBox.Size = new System.Drawing.Size(100, 20);
             this.MouseGridTextBox.TabIndex = 2;
+            this.MouseGridTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // MouseGroupBox
             // 
@@ -98,7 +104,7 @@
             this.MouseGroupBox.Controls.Add(this.MouseGridTextBox);
             this.MouseGroupBox.Location = new System.Drawing.Point(9, 12);
             this.MouseGroupBox.Name = "MouseGroupBox";
-            this.MouseGroupBox.Size = new System.Drawing.Size(182, 67);
+            this.MouseGroupBox.Size = new System.Drawing.Size(182, 71);
             this.MouseGroupBox.TabIndex = 3;
             this.MouseGroupBox.TabStop = false;
             this.MouseGroupBox.Text = "Mouse";
@@ -106,7 +112,7 @@
             // MouseGridLabel
             // 
             this.MouseGridLabel.AutoSize = true;
-            this.MouseGridLabel.Location = new System.Drawing.Point(6, 41);
+            this.MouseGridLabel.Location = new System.Drawing.Point(6, 45);
             this.MouseGridLabel.Name = "MouseGridLabel";
             this.MouseGridLabel.Size = new System.Drawing.Size(50, 13);
             this.MouseGridLabel.TabIndex = 4;
@@ -123,7 +129,7 @@
             // 
             // RunAIButton
             // 
-            this.RunAIButton.Location = new System.Drawing.Point(8, 442);
+            this.RunAIButton.Location = new System.Drawing.Point(9, 529);
             this.RunAIButton.Name = "RunAIButton";
             this.RunAIButton.Size = new System.Drawing.Size(182, 23);
             this.RunAIButton.TabIndex = 4;
@@ -133,7 +139,7 @@
             // 
             // ClearButton
             // 
-            this.ClearButton.Location = new System.Drawing.Point(8, 500);
+            this.ClearButton.Location = new System.Drawing.Point(9, 587);
             this.ClearButton.Name = "ClearButton";
             this.ClearButton.Size = new System.Drawing.Size(182, 23);
             this.ClearButton.TabIndex = 5;
@@ -145,7 +151,7 @@
             // 
             this.SmallGridButton.AutoSize = true;
             this.SmallGridButton.Checked = true;
-            this.SmallGridButton.Location = new System.Drawing.Point(6, 64);
+            this.SmallGridButton.Location = new System.Drawing.Point(10, 64);
             this.SmallGridButton.Name = "SmallGridButton";
             this.SmallGridButton.Size = new System.Drawing.Size(72, 17);
             this.SmallGridButton.TabIndex = 6;
@@ -158,7 +164,7 @@
             // LargeGridButton
             // 
             this.LargeGridButton.AutoSize = true;
-            this.LargeGridButton.Location = new System.Drawing.Point(6, 88);
+            this.LargeGridButton.Location = new System.Drawing.Point(10, 88);
             this.LargeGridButton.Name = "LargeGridButton";
             this.LargeGridButton.Size = new System.Drawing.Size(110, 17);
             this.LargeGridButton.TabIndex = 7;
@@ -181,16 +187,50 @@
             this.GridGroupBox.Controls.Add(this.SmallGridButton);
             this.GridGroupBox.Controls.Add(this.RandomizeButton);
             this.GridGroupBox.Controls.Add(this.LargeGridButton);
-            this.GridGroupBox.Location = new System.Drawing.Point(8, 85);
+            this.GridGroupBox.Location = new System.Drawing.Point(9, 89);
             this.GridGroupBox.Name = "GridGroupBox";
             this.GridGroupBox.Size = new System.Drawing.Size(182, 199);
             this.GridGroupBox.TabIndex = 8;
             this.GridGroupBox.TabStop = false;
             this.GridGroupBox.Text = "Grid";
             // 
+            // GridSizeLabel
+            // 
+            this.GridSizeLabel.AutoSize = true;
+            this.GridSizeLabel.Location = new System.Drawing.Point(7, 41);
+            this.GridSizeLabel.Name = "GridSizeLabel";
+            this.GridSizeLabel.Size = new System.Drawing.Size(52, 13);
+            this.GridSizeLabel.TabIndex = 16;
+            this.GridSizeLabel.Text = "Grid Size:";
+            // 
+            // GridSizeTextBox
+            // 
+            this.GridSizeTextBox.Location = new System.Drawing.Point(73, 38);
+            this.GridSizeTextBox.Name = "GridSizeTextBox";
+            this.GridSizeTextBox.Size = new System.Drawing.Size(100, 20);
+            this.GridSizeTextBox.TabIndex = 15;
+            this.GridSizeTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // PixelSizeLabel
+            // 
+            this.PixelSizeLabel.AutoSize = true;
+            this.PixelSizeLabel.Location = new System.Drawing.Point(7, 16);
+            this.PixelSizeLabel.Name = "PixelSizeLabel";
+            this.PixelSizeLabel.Size = new System.Drawing.Size(55, 13);
+            this.PixelSizeLabel.TabIndex = 6;
+            this.PixelSizeLabel.Text = "Pixel Size:";
+            // 
+            // PixelSizeTextBox
+            // 
+            this.PixelSizeTextBox.Location = new System.Drawing.Point(73, 13);
+            this.PixelSizeTextBox.Name = "PixelSizeTextBox";
+            this.PixelSizeTextBox.Size = new System.Drawing.Size(100, 20);
+            this.PixelSizeTextBox.TabIndex = 5;
+            this.PixelSizeTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
             // RandomMazeButton
             // 
-            this.RandomMazeButton.Location = new System.Drawing.Point(6, 166);
+            this.RandomMazeButton.Location = new System.Drawing.Point(10, 166);
             this.RandomMazeButton.Name = "RandomMazeButton";
             this.RandomMazeButton.Size = new System.Drawing.Size(163, 23);
             this.RandomMazeButton.TabIndex = 14;
@@ -200,7 +240,7 @@
             // 
             // GridSizeUpDown
             // 
-            this.GridSizeUpDown.Location = new System.Drawing.Point(122, 88);
+            this.GridSizeUpDown.Location = new System.Drawing.Point(126, 88);
             this.GridSizeUpDown.Maximum = new decimal(new int[] {
             10,
             0,
@@ -224,7 +264,7 @@
             // WallDensityLabel
             // 
             this.WallDensityLabel.AutoSize = true;
-            this.WallDensityLabel.Location = new System.Drawing.Point(4, 114);
+            this.WallDensityLabel.Location = new System.Drawing.Point(7, 114);
             this.WallDensityLabel.Name = "WallDensityLabel";
             this.WallDensityLabel.Size = new System.Drawing.Size(66, 13);
             this.WallDensityLabel.TabIndex = 12;
@@ -234,7 +274,7 @@
             // 
             this.RandomnessBar.AutoSize = false;
             this.RandomnessBar.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.RandomnessBar.Location = new System.Drawing.Point(70, 114);
+            this.RandomnessBar.Location = new System.Drawing.Point(74, 114);
             this.RandomnessBar.Maximum = 35;
             this.RandomnessBar.Name = "RandomnessBar";
             this.RandomnessBar.Size = new System.Drawing.Size(99, 20);
@@ -244,7 +284,7 @@
             // 
             // RandomizeButton
             // 
-            this.RandomizeButton.Location = new System.Drawing.Point(6, 137);
+            this.RandomizeButton.Location = new System.Drawing.Point(10, 137);
             this.RandomizeButton.Name = "RandomizeButton";
             this.RandomizeButton.Size = new System.Drawing.Size(163, 23);
             this.RandomizeButton.TabIndex = 10;
@@ -254,7 +294,7 @@
             // 
             // ResetButton
             // 
-            this.ResetButton.Location = new System.Drawing.Point(8, 471);
+            this.ResetButton.Location = new System.Drawing.Point(9, 558);
             this.ResetButton.Name = "ResetButton";
             this.ResetButton.Size = new System.Drawing.Size(182, 23);
             this.ResetButton.TabIndex = 9;
@@ -267,7 +307,7 @@
             this.DiagonalCheckBox.AutoSize = true;
             this.DiagonalCheckBox.Checked = true;
             this.DiagonalCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.DiagonalCheckBox.Location = new System.Drawing.Point(6, 19);
+            this.DiagonalCheckBox.Location = new System.Drawing.Point(10, 19);
             this.DiagonalCheckBox.Name = "DiagonalCheckBox";
             this.DiagonalCheckBox.Size = new System.Drawing.Size(107, 17);
             this.DiagonalCheckBox.TabIndex = 10;
@@ -276,54 +316,92 @@
             // 
             // AIGroupBox
             // 
+            this.AIGroupBox.Controls.Add(this.ConsideredNodeLengthTextBox);
+            this.AIGroupBox.Controls.Add(this.ConsideredNodeLengthLabel);
             this.AIGroupBox.Controls.Add(this.TieBreakerCheckBox);
             this.AIGroupBox.Controls.Add(this.UseGCheckBox);
+            this.AIGroupBox.Controls.Add(this.PathLengthLabel);
             this.AIGroupBox.Controls.Add(this.DrawOpenlistCheckBox);
+            this.AIGroupBox.Controls.Add(this.PathLengthTextBox);
             this.AIGroupBox.Controls.Add(this.label3);
             this.AIGroupBox.Controls.Add(this.HeuristicComboBox);
             this.AIGroupBox.Controls.Add(this.DiagonalCheckBox);
-            this.AIGroupBox.Location = new System.Drawing.Point(8, 290);
+            this.AIGroupBox.Location = new System.Drawing.Point(9, 294);
             this.AIGroupBox.Name = "AIGroupBox";
-            this.AIGroupBox.Size = new System.Drawing.Size(183, 146);
+            this.AIGroupBox.Size = new System.Drawing.Size(183, 205);
             this.AIGroupBox.TabIndex = 11;
             this.AIGroupBox.TabStop = false;
             this.AIGroupBox.Text = "AI";
+            // 
+            // ConsideredNodeLengthLabel
+            // 
+            this.ConsideredNodeLengthLabel.AutoSize = true;
+            this.ConsideredNodeLengthLabel.Location = new System.Drawing.Point(7, 169);
+            this.ConsideredNodeLengthLabel.Name = "ConsideredNodeLengthLabel";
+            this.ConsideredNodeLengthLabel.Size = new System.Drawing.Size(72, 26);
+            this.ConsideredNodeLengthLabel.TabIndex = 20;
+            this.ConsideredNodeLengthLabel.Text = "Considered \r\nNode Length:";
             // 
             // TieBreakerCheckBox
             // 
             this.TieBreakerCheckBox.AutoSize = true;
             this.TieBreakerCheckBox.Checked = true;
             this.TieBreakerCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.TieBreakerCheckBox.Location = new System.Drawing.Point(6, 88);
+            this.TieBreakerCheckBox.Location = new System.Drawing.Point(10, 88);
             this.TieBreakerCheckBox.Name = "TieBreakerCheckBox";
             this.TieBreakerCheckBox.Size = new System.Drawing.Size(109, 17);
             this.TieBreakerCheckBox.TabIndex = 14;
             this.TieBreakerCheckBox.Text = "Use Tie Breaker?";
             this.TieBreakerCheckBox.UseVisualStyleBackColor = true;
             // 
+            // ConsideredNodeLengthTextBox
+            // 
+            this.ConsideredNodeLengthTextBox.Location = new System.Drawing.Point(77, 175);
+            this.ConsideredNodeLengthTextBox.Name = "ConsideredNodeLengthTextBox";
+            this.ConsideredNodeLengthTextBox.Size = new System.Drawing.Size(96, 20);
+            this.ConsideredNodeLengthTextBox.TabIndex = 19;
+            this.ConsideredNodeLengthTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
             // UseGCheckBox
             // 
             this.UseGCheckBox.AutoSize = true;
             this.UseGCheckBox.Checked = true;
             this.UseGCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.UseGCheckBox.Location = new System.Drawing.Point(6, 64);
+            this.UseGCheckBox.Location = new System.Drawing.Point(10, 65);
             this.UseGCheckBox.Name = "UseGCheckBox";
             this.UseGCheckBox.Size = new System.Drawing.Size(62, 17);
             this.UseGCheckBox.TabIndex = 13;
             this.UseGCheckBox.Text = "Use G?";
             this.UseGCheckBox.UseVisualStyleBackColor = true;
             // 
+            // PathLengthLabel
+            // 
+            this.PathLengthLabel.AutoSize = true;
+            this.PathLengthLabel.Location = new System.Drawing.Point(6, 148);
+            this.PathLengthLabel.Name = "PathLengthLabel";
+            this.PathLengthLabel.Size = new System.Drawing.Size(68, 13);
+            this.PathLengthLabel.TabIndex = 18;
+            this.PathLengthLabel.Text = "Path Length:";
+            // 
             // DrawOpenlistCheckBox
             // 
             this.DrawOpenlistCheckBox.AutoSize = true;
             this.DrawOpenlistCheckBox.Checked = true;
             this.DrawOpenlistCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.DrawOpenlistCheckBox.Location = new System.Drawing.Point(6, 41);
+            this.DrawOpenlistCheckBox.Location = new System.Drawing.Point(10, 41);
             this.DrawOpenlistCheckBox.Name = "DrawOpenlistCheckBox";
             this.DrawOpenlistCheckBox.Size = new System.Drawing.Size(147, 17);
             this.DrawOpenlistCheckBox.TabIndex = 12;
             this.DrawOpenlistCheckBox.Text = "Draw Considered Nodes?";
             this.DrawOpenlistCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // PathLengthTextBox
+            // 
+            this.PathLengthTextBox.Location = new System.Drawing.Point(77, 145);
+            this.PathLengthTextBox.Name = "PathLengthTextBox";
+            this.PathLengthTextBox.Size = new System.Drawing.Size(96, 20);
+            this.PathLengthTextBox.TabIndex = 17;
+            this.PathLengthTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // label3
             // 
@@ -345,42 +423,10 @@
             "None (Dijkstra)"});
             this.HeuristicComboBox.Location = new System.Drawing.Point(37, 114);
             this.HeuristicComboBox.Name = "HeuristicComboBox";
-            this.HeuristicComboBox.Size = new System.Drawing.Size(140, 21);
+            this.HeuristicComboBox.Size = new System.Drawing.Size(136, 21);
             this.HeuristicComboBox.TabIndex = 0;
             this.HeuristicComboBox.ValueMember = "Manhatten";
             this.HeuristicComboBox.SelectedValueChanged += new System.EventHandler(this.HeuristicComboBox_SelectedValueChanged);
-            // 
-            // PixelSizeLabel
-            // 
-            this.PixelSizeLabel.AutoSize = true;
-            this.PixelSizeLabel.Location = new System.Drawing.Point(7, 16);
-            this.PixelSizeLabel.Name = "PixelSizeLabel";
-            this.PixelSizeLabel.Size = new System.Drawing.Size(55, 13);
-            this.PixelSizeLabel.TabIndex = 6;
-            this.PixelSizeLabel.Text = "Pixel Size:";
-            // 
-            // PixelSizeTextBox
-            // 
-            this.PixelSizeTextBox.Location = new System.Drawing.Point(73, 13);
-            this.PixelSizeTextBox.Name = "PixelSizeTextBox";
-            this.PixelSizeTextBox.Size = new System.Drawing.Size(100, 20);
-            this.PixelSizeTextBox.TabIndex = 5;
-            // 
-            // GridSizeLabel
-            // 
-            this.GridSizeLabel.AutoSize = true;
-            this.GridSizeLabel.Location = new System.Drawing.Point(7, 41);
-            this.GridSizeLabel.Name = "GridSizeLabel";
-            this.GridSizeLabel.Size = new System.Drawing.Size(52, 13);
-            this.GridSizeLabel.TabIndex = 16;
-            this.GridSizeLabel.Text = "Grid Size:";
-            // 
-            // GridSizeTextBox
-            // 
-            this.GridSizeTextBox.Location = new System.Drawing.Point(73, 38);
-            this.GridSizeTextBox.Name = "GridSizeTextBox";
-            this.GridSizeTextBox.Size = new System.Drawing.Size(100, 20);
-            this.GridSizeTextBox.TabIndex = 15;
             // 
             // MainForm
             // 
@@ -440,6 +486,10 @@
         private System.Windows.Forms.TextBox GridSizeTextBox;
         private System.Windows.Forms.Label PixelSizeLabel;
         private System.Windows.Forms.TextBox PixelSizeTextBox;
+        private System.Windows.Forms.Label ConsideredNodeLengthLabel;
+        private System.Windows.Forms.TextBox ConsideredNodeLengthTextBox;
+        private System.Windows.Forms.Label PathLengthLabel;
+        private System.Windows.Forms.TextBox PathLengthTextBox;
     }
 }
 
