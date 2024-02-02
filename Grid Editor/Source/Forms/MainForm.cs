@@ -42,11 +42,12 @@ namespace PathfindingFun
             _smallGridSize = 30;
             LastNumericUpDown = Convert.ToInt32(GridSizeUpDown.Value);
             _largeGridSize = Convert.ToInt32(GridSizeUpDown.Value);
-            _smallPanelSize = new Size(600, 600);
+            _smallPanelSize = Panel1.Size;
 
             _gridDisplay = new GridDisplay();
             _gridDisplay.CellSize = _smallGridSize;
-            _gridDisplay.Dimensions = new Size(20, 20);
+            _gridDisplay.Dimensions = new Size(Panel1.Width / _smallGridSize, Panel1.Height / _smallGridSize);
+
             UpdateGridLabels();
 
             _mouse = new Mouse();
@@ -378,6 +379,7 @@ namespace PathfindingFun
         {
             PixelSizeTextBox.Text = string.Format("{0} x {1}", Panel1.Size.Width, Panel1.Size.Height);
             GridSizeTextBox.Text = string.Format("{0} x {1}", _gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height);
+            CellCountTextBox.Text = (_gridDisplay.Dimensions.Width * _gridDisplay.Dimensions.Height).ToString();
         }
 
         private void ResetAILabels()
