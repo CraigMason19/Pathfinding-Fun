@@ -81,9 +81,11 @@ namespace PathfindingFun
 
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
+            Panel1.BackColor = ProjectColors.Clear;
+
             if (SmallGridButton.Checked)
             {
-                _gridDisplay.Draw(e.Graphics, _mouse.Local);
+                _gridDisplay.DrawGridLines(e.Graphics, _mouse.Local);
             }
         }
 
@@ -166,7 +168,7 @@ namespace PathfindingFun
 
         private void StartSearchNode_Click(object sender, System.EventArgs e)
         {
-            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), StartSearchNode.ToPoint(), Color.White);
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), StartSearchNode.ToPoint(), ProjectColors.Clear);
             _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, ProjectColors.StartNode);
             StartSearchNode = new SearchNode(_mouse.Grid, 0);
             OpenHeap.Clear();
@@ -176,7 +178,7 @@ namespace PathfindingFun
 
         private void EndSearchNode_Click(object sender, System.EventArgs e)
         {
-            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode.ToPoint(), Color.White);
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode.ToPoint(), ProjectColors.Clear);
             _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, ProjectColors.EndNode);
             EndSearchNode = new SearchNode(_mouse.Grid, 0);
             PathfindingGrid[EndSearchNode._Pos.X, EndSearchNode._Pos.Y]._Walkable = true;
