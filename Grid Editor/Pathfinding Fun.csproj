@@ -51,6 +51,9 @@
   <ItemGroup>
     <Compile Include="Source\AI.cs" />
     <Compile Include="Source\BinaryHeap.cs" />
+    <Compile Include="Source\Maze.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Source\ProjectColors.cs" />
     <Compile Include="Source\Forms\MazeLoadingForm.cs">
       <SubType>Form</SubType>
