@@ -97,32 +97,21 @@ namespace PathfindingFun
             }
         }
 
-        private void panel1_MouseMove(object sender, MouseEventArgs e)
+        public void UpdateMouseLabels() 
         {
-            //MouseLocal = Panel1.PointToClient(Cursor.Position);
-            //MouseScreenTextBox.Text = string.Format("X: {0} , Y: {1}", MouseLocal.X, MouseLocal.Y);
-
             _mouse.Local = Panel1.PointToClient(Cursor.Position);
             MouseScreenTextBox.Text = _mouse.LocalSpaceString();
-
-            //MouseGrid.X = (MouseLocal.X / LevelMap.CellSize.Width);
-            //MouseGrid.Y = (MouseLocal.Y / LevelMap.CellSize.Height);
-            //MouseGridTextBox.Text = string.Format("X: {0} , Y: {1}", MouseGrid.X, MouseGrid.Y);
 
             _mouse.Grid.X = (_mouse.Local.X / _gridDisplay.CellSize);
             _mouse.Grid.Y = (_mouse.Local.Y / _gridDisplay.CellSize);
             MouseGridTextBox.Text = _mouse.GridSpaceString();
+        }
 
-            //if (MouseGrid != LastPoint)
-            //{
-            //    MouseMoved = true;
-            //}
-            //else
-            //{
-            //    MouseMoved = false;
-            //}
-            //LastPoint = MouseGrid;
+        private void panel1_MouseMove(object sender, MouseEventArgs e)
+        {
+            UpdateMouseLabels();
 
+            // 
             if (_mouse.Grid != _mouse.LastPoint)
             {
                 _mouse.Moved = true;
@@ -132,7 +121,6 @@ namespace PathfindingFun
                 _mouse.Moved = false;
             }
             _mouse.LastPoint = _mouse.Grid;
-
 
             // If the left mouse button is clicked, can draw extra walls.
             if (_mouse.Moved && e.Button == MouseButtons.Left)
@@ -144,7 +132,9 @@ namespace PathfindingFun
                     PathfindingGrid[_mouse.Grid.X, _mouse.Grid.Y]._Walkable = false;
                 }
             }
-            _gridDisplay.DrawGridLines(Panel1.CreateGraphics());
+
+
+            _gridDisplay.DrawGridLines(Panel1.CreateGraphics()); 
         }
 
         private void panel1_MouseDown(object sender, MouseEventArgs e)
