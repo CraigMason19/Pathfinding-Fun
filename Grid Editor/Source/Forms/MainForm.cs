@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
-
-// TODO
-// right click then left click bug
-// private variables have underscore
-// search nodes have parent nodes
 
 namespace PathfindingFun
 {
@@ -35,20 +29,29 @@ namespace PathfindingFun
         {
             InitializeComponent();
 
-            // Form setup
+            FormSetup();
+            GridSetup();
+            NodeSetup();
+        }
+
+        #region Setup
+
+        private void FormSetup()
+        {
             HeuristicComboBox.SelectedIndex = 0;
-            ResetAILabels();
-            Panel1.BackColor = ProjectColors.Clear;
+            // get last numeric up down
+                        
             this.MinimumSize = this.Size;
             Panel1.MinimumSize = Panel1.Size;
-
-
+            Panel1.BackColor = ProjectColors.Clear;
 
             _mouse = new Mouse();
 
+            ResetAILabels();
+        }
 
-
-            // Grid setup
+        private void GridSetup()
+        {
             _smallGridPixelSize = 30;
             _lastNumericUpDown = Convert.ToInt32(GridSizeUpDown.Value);
             _largeGridPixelSize = Convert.ToInt32(GridSizeUpDown.Value);
@@ -58,10 +61,10 @@ namespace PathfindingFun
             _gridDisplay.Dimensions = new Size(Panel1.Width / _smallGridPixelSize, Panel1.Height / _smallGridPixelSize);
 
             UpdateGridLabels();
+        }
 
-
-
-
+        private void NodeSetup()
+        {
             // SearchNode setup
             StartSearchNode = SearchNode.OutOfIndexNode;
             EndSearchNode = SearchNode.OutOfIndexNode;
@@ -89,15 +92,18 @@ namespace PathfindingFun
             }
         }
 
-        private void panel1_Paint(object sender, PaintEventArgs e)
+        #endregion
+
+        #region Labels
+
+        private void UpdateGridLabels()
         {
-            if (SmallGridButton.Checked)
-            {
-                _gridDisplay.DrawGridLines(e.Graphics);
-            }
+            PixelSizeTextBox.Text = string.Format("{0} x {1}", Panel1.Size.Width, Panel1.Size.Height);
+            GridSizeTextBox.Text = string.Format("{0} x {1}", _gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height);
+            CellCountTextBox.Text = (_gridDisplay.Dimensions.Width * _gridDisplay.Dimensions.Height).ToString();
         }
 
-        public void UpdateMouseLabels() 
+        public void UpdateMouseLabels()
         {
             _mouse.Local = Panel1.PointToClient(Cursor.Position);
             MouseScreenTextBox.Text = _mouse.LocalSpaceString();
@@ -107,19 +113,81 @@ namespace PathfindingFun
             MouseGridTextBox.Text = _mouse.GridSpaceString();
         }
 
+        private void ResetAILabels()
+        {
+            PathLengthTextBox.Text = "N/A";
+            ConsideredNodeLengthTextBox.Text = "N/A";
+        }
+
+        #endregion
+
+        #region GUI
+
+        private void SmallGridButton_Click(object sender, EventArgs e)
+        {
+            Clear();
+        }
+
+        private void LargeGridButton_Click(object sender, EventArgs e)
+        {
+            LargeGridButton_CheckedChanged(sender, e);
+        }
+
+        private void GridSizeUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            _largeGridPixelSize = Convert.ToInt32(GridSizeUpDown.Value);
+        }
+
+        private void HeuristicComboBox_SelectedValueChanged(object sender, EventArgs e)
+        {
+            switch ((sender as ComboBox).SelectedItem.ToString())
+            {
+                case "Manhatten":
+                    DiagonalCheckBox.Checked = false;
+                    UseGCheckBox.Checked = true;
+                    TieBreakerCheckBox.Checked = true;
+                    break;
+
+                case "Diagonal Distance":
+                    DiagonalCheckBox.Checked = true;
+                    UseGCheckBox.Checked = true;
+                    TieBreakerCheckBox.Checked = true;
+                    break;
+
+                case "Euclidean Distance":
+                    DiagonalCheckBox.Checked = true;
+                    UseGCheckBox.Checked = true;
+                    TieBreakerCheckBox.Checked = true;
+                    break;
+
+                case "None":
+                    DiagonalCheckBox.Checked = false;
+                    UseGCheckBox.Checked = true;
+                    TieBreakerCheckBox.Checked = true;
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        #endregion
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+            if (SmallGridButton.Checked)
+            {
+                _gridDisplay.DrawGridLines(e.Graphics);
+            }
+        }
+
+        #region Mouse
+
         private void panel1_MouseMove(object sender, MouseEventArgs e)
         {
             UpdateMouseLabels();
 
-            // 
-            if (_mouse.Grid != _mouse.LastPoint)
-            {
-                _mouse.Moved = true;
-            }
-            else
-            {
-                _mouse.Moved = false;
-            }
+            _mouse.Moved = (_mouse.Grid != _mouse.LastPoint) ? true : false;
             _mouse.LastPoint = _mouse.Grid;
 
             // If the left mouse button is clicked, can draw extra walls.
@@ -134,7 +202,9 @@ namespace PathfindingFun
             }
 
 
-            _gridDisplay.DrawGridLines(Panel1.CreateGraphics()); 
+            _gridDisplay.DrawGridLines(Panel1.CreateGraphics());
+
+
         }
 
         private void panel1_MouseDown(object sender, MouseEventArgs e)
@@ -191,6 +261,8 @@ namespace PathfindingFun
             EndSearchNode = new SearchNode(_mouse.Grid, 0);
             PathfindingGrid[EndSearchNode._Pos.X, EndSearchNode._Pos.Y]._Walkable = true;
         }
+
+        #endregion
 
         private void RunAI_Click(object sender, EventArgs e)
         {
@@ -367,23 +439,6 @@ namespace PathfindingFun
             Clear();
         }
 
-        #region Labels
-        
-        private void UpdateGridLabels()
-        {
-            PixelSizeTextBox.Text = string.Format("{0} x {1}", Panel1.Size.Width, Panel1.Size.Height);
-            GridSizeTextBox.Text = string.Format("{0} x {1}", _gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height);
-            CellCountTextBox.Text = (_gridDisplay.Dimensions.Width * _gridDisplay.Dimensions.Height).ToString();
-        }
-
-        private void ResetAILabels()
-        {
-            PathLengthTextBox.Text = "N/A";
-            ConsideredNodeLengthTextBox.Text = "N/A";
-        }
-        
-        #endregion
-
         private void LargeGridButton_CheckedChanged(object sender, EventArgs e)
         {
             _gridDisplay = new GridDisplay();
@@ -503,15 +558,7 @@ namespace PathfindingFun
             }
         }
 
-        private void LargeGridButton_Click(object sender, EventArgs e)
-        {
-            LargeGridButton_CheckedChanged(sender, e);
-        }
 
-        private void GridSizeUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            _largeGridPixelSize = Convert.ToInt32(GridSizeUpDown.Value);
-        }
 
         // TODO - index out range
         private void RandomMazeButton_Click(object sender, EventArgs e)
@@ -530,42 +577,8 @@ namespace PathfindingFun
 
         }
 
-        private void HeuristicComboBox_SelectedValueChanged(object sender, EventArgs e)
-        {
-            switch ((sender as ComboBox).SelectedItem.ToString())
-            {
-                case "Manhatten":
-                    DiagonalCheckBox.Checked = false;
-                    UseGCheckBox.Checked = true;
-                    TieBreakerCheckBox.Checked = true;
-                    break;
 
-                case "Diagonal Distance":
-                    DiagonalCheckBox.Checked = true;
-                    UseGCheckBox.Checked = true;
-                    TieBreakerCheckBox.Checked = true;
-                    break;                    
 
-                case "Euclidean Distance":
-                    DiagonalCheckBox.Checked = true;
-                    UseGCheckBox.Checked = true;
-                    TieBreakerCheckBox.Checked = true;
-                    break;
 
-                case "None":
-                    DiagonalCheckBox.Checked = false;
-                    UseGCheckBox.Checked = true;
-                    TieBreakerCheckBox.Checked = true;
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        private void SmallGridButton_Click(object sender, EventArgs e)
-        {
-            Clear();
-        }
     }
 }
