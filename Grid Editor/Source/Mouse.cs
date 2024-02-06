@@ -7,10 +7,10 @@ namespace PathfindingFun
     /// </summary>
     public class Mouse
     {
-        public Point Local;
-        public Point Grid;
-        public Point LastPoint;
-        public bool Moved;
+        public Point Local { get; set; }
+        public Point Grid { get; set; }
+        public Point LastPoint { get; set; }
+        public bool Moved { get; set; }
 
         public Mouse()
         {

@@ -108,8 +108,7 @@ namespace PathfindingFun
             _mouse.Local = Panel1.PointToClient(Cursor.Position);
             MouseScreenTextBox.Text = _mouse.LocalSpaceString();
 
-            _mouse.Grid.X = (_mouse.Local.X / _gridDisplay.CellSize);
-            _mouse.Grid.Y = (_mouse.Local.Y / _gridDisplay.CellSize);
+            _mouse.Grid = new Point(_mouse.Local.X / _gridDisplay.CellSize, _mouse.Local.Y / _gridDisplay.CellSize);
             MouseGridTextBox.Text = _mouse.GridSpaceString();
         }
 
