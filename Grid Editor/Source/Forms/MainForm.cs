@@ -15,12 +15,12 @@ namespace PathfindingFun
     {
         // General
         Mouse _mouse;
-        int LastNumericUpDown;
+        int _lastNumericUpDown;
 
         // Grid
         GridDisplay _gridDisplay;
-        int _smallGridSize; // The pixel size of a cell in the small grid
-        int _largeGridSize;
+        int _smallGridPixelSize; 
+        int _largeGridPixelSize;
          
         // Search nodes
         SearchNode StartSearchNode;
@@ -42,22 +42,25 @@ namespace PathfindingFun
             this.MinimumSize = this.Size;
             Panel1.MinimumSize = Panel1.Size;
 
+
+
+            _mouse = new Mouse();
+
+
+
             // Grid setup
-            _smallGridSize = 30;
-            LastNumericUpDown = Convert.ToInt32(GridSizeUpDown.Value);
-            _largeGridSize = Convert.ToInt32(GridSizeUpDown.Value);
+            _smallGridPixelSize = 30;
+            _lastNumericUpDown = Convert.ToInt32(GridSizeUpDown.Value);
+            _largeGridPixelSize = Convert.ToInt32(GridSizeUpDown.Value);
 
             _gridDisplay = new GridDisplay();
-            _gridDisplay.CellSize = _smallGridSize;
-            _gridDisplay.Dimensions = new Size(Panel1.Width / _smallGridSize, Panel1.Height / _smallGridSize);
+            _gridDisplay.CellSize = _smallGridPixelSize;
+            _gridDisplay.Dimensions = new Size(Panel1.Width / _smallGridPixelSize, Panel1.Height / _smallGridPixelSize);
 
             UpdateGridLabels();
 
-            _mouse = new Mouse();
-            _mouse.Local = new Point(0, 0);
-            _mouse.Grid = new Point(0, 0);
-            _mouse.LastPoint = new Point(-1, -1);
-            _mouse.Moved = false;
+
+
 
             // SearchNode setup
             StartSearchNode = SearchNode.OutOfIndexNode;
@@ -356,8 +359,8 @@ namespace PathfindingFun
         private void SmallGridButton_CheckedChanged(object sender, EventArgs e)
         {
             _gridDisplay = new GridDisplay();
-            _gridDisplay.CellSize = _smallGridSize;
-            _gridDisplay.Dimensions = new Size(Panel1.Width / _smallGridSize, Panel1.Height / _smallGridSize);
+            _gridDisplay.CellSize = _smallGridPixelSize;
+            _gridDisplay.Dimensions = new Size(Panel1.Width / _smallGridPixelSize, Panel1.Height / _smallGridPixelSize);
 
             UpdateGridLabels();
             ResetAILabels();
@@ -394,8 +397,8 @@ namespace PathfindingFun
         private void LargeGridButton_CheckedChanged(object sender, EventArgs e)
         {
             _gridDisplay = new GridDisplay();
-            _gridDisplay.CellSize = _largeGridSize;
-            _gridDisplay.Dimensions = new Size(Panel1.Width / _largeGridSize, Panel1.Height / _largeGridSize);
+            _gridDisplay.CellSize = _largeGridPixelSize;
+            _gridDisplay.Dimensions = new Size(Panel1.Width / _largeGridPixelSize, Panel1.Height / _largeGridPixelSize);
 
             UpdateGridLabels();
             ResetAILabels();
@@ -441,9 +444,9 @@ namespace PathfindingFun
 
         private void RandomizeButton_Click(object sender, EventArgs e)
         {
-            if (Convert.ToInt32(GridSizeUpDown.Value) != LastNumericUpDown && LargeGridButton.Checked)
+            if (Convert.ToInt32(GridSizeUpDown.Value) != _lastNumericUpDown && LargeGridButton.Checked)
             {
-                LastNumericUpDown = Convert.ToInt32(GridSizeUpDown.Value);
+                _lastNumericUpDown = Convert.ToInt32(GridSizeUpDown.Value);
                 LargeGridButton_CheckedChanged(sender, e);
             }
 
@@ -517,15 +520,15 @@ namespace PathfindingFun
 
         private void GridSizeUpDown_ValueChanged(object sender, EventArgs e)
         {
-            _largeGridSize = Convert.ToInt32(GridSizeUpDown.Value);
+            _largeGridPixelSize = Convert.ToInt32(GridSizeUpDown.Value);
         }
 
         // TODO - index out range
         private void RandomMazeButton_Click(object sender, EventArgs e)
         {
-            if (Convert.ToInt32(GridSizeUpDown.Value) != LastNumericUpDown && LargeGridButton.Checked)
+            if (Convert.ToInt32(GridSizeUpDown.Value) != _lastNumericUpDown && LargeGridButton.Checked)
             {
-                LastNumericUpDown = Convert.ToInt32(GridSizeUpDown.Value);
+                _lastNumericUpDown = Convert.ToInt32(GridSizeUpDown.Value);
                 LargeGridButton_CheckedChanged(sender, e);                
             }
 

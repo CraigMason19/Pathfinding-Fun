@@ -5,12 +5,20 @@ namespace PathfindingFun
     /// <summary>
     /// Simple struct for simplicity and readability
     /// </summary>
-    public struct Mouse
+    public class Mouse
     {
         public Point Local;
         public Point Grid;
         public Point LastPoint;
         public bool Moved;
+
+        public Mouse()
+        {
+            Local = new Point(0, 0);
+            Grid = new Point(0, 0);
+            LastPoint = new Point(-1, -1);
+            Moved = false;
+        }
 
         public string LocalSpaceString()
         {
