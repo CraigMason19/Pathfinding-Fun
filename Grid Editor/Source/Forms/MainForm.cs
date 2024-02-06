@@ -361,37 +361,29 @@ namespace PathfindingFun
         {
             ResetAILabels();
 
+            // Update the resized panel with the correct pixel size
+            if (SmallGridButton.Checked)
+            {
+                SmallGridButton_CheckedChanged(sender, e);
+            }
+            else
+            {
+                LargeGridButton_CheckedChanged(sender, e);
+            }
+
             switch (this.WindowState)
             {
                 case FormWindowState.Maximized:
-                    //handle maximizing
                     int w = this.Size.Width - Panel1.Left - 30;
                     int h = this.Size.Height - Panel1.Top - 50;
                     Panel1.Size = new Size(w, h);
 
-                    if (!LargeGridButton.Checked)
-                    {
-                        SmallGridButton_CheckedChanged(sender, e);
-                    }
-                    else
-                    {
-                        LargeGridButton_CheckedChanged(sender, e);
-                    }
                     break;
 
                 case FormWindowState.Minimized:
-                    // Handle minimizing
                     break;
 
                 case FormWindowState.Normal:
-                    if (!LargeGridButton.Checked)
-                    {
-                        SmallGridButton_CheckedChanged(sender, e);
-                    }
-                    else
-                    {
-                        LargeGridButton_CheckedChanged(sender, e);
-                    }
                     break;
 
                 default:
@@ -428,7 +420,6 @@ namespace PathfindingFun
             }
         }
 
-        // TODO - index out range
         private void RandomMazeButton_Click(object sender, EventArgs e)
         {
             if (Convert.ToInt32(GridSizeUpDown.Value) != _lastNumericUpDown && LargeGridButton.Checked)
