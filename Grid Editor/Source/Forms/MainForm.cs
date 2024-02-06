@@ -264,6 +264,187 @@ namespace PathfindingFun
 
         #endregion
 
+
+
+        public void Clear()
+        {
+            StartSearchNode = SearchNode.OutOfIndexNode;
+            EndSearchNode = SearchNode.OutOfIndexNode;
+
+            OpenHeap.Clear();
+            ClosedHash.Clear();
+            Panel1.Invalidate();
+
+            foreach (SearchNode n in PathfindingGrid)
+            {
+                n._Walkable = true;
+            }
+        }
+
+        private void ClearButton_Click(object sender, EventArgs e)
+        {
+            Clear();
+        }
+
+        private void SmallGridButton_CheckedChanged(object sender, EventArgs e)
+        {
+            _gridDisplay = new GridDisplay();
+            _gridDisplay.CellSize = _smallGridPixelSize;
+            _gridDisplay.Dimensions = new Size(Panel1.Width / _smallGridPixelSize, Panel1.Height / _smallGridPixelSize);
+
+            UpdateGridLabels();
+            ResetAILabels();
+
+            PathfindingGrid = new SearchNode[_gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height];
+            for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
+            {
+                for (int y = 0; y < _gridDisplay.Dimensions.Height; y++)
+                {
+                    PathfindingGrid[x, y] = new SearchNode(x, y);
+                }
+            }
+
+            Clear();
+        }
+
+        private void LargeGridButton_CheckedChanged(object sender, EventArgs e)
+        {
+            _gridDisplay = new GridDisplay();
+            _gridDisplay.CellSize = _largeGridPixelSize;
+            _gridDisplay.Dimensions = new Size(Panel1.Width / _largeGridPixelSize, Panel1.Height / _largeGridPixelSize);
+
+            UpdateGridLabels();
+            ResetAILabels();
+
+            PathfindingGrid = new SearchNode[_gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height];
+            for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
+            {
+                for (int y = 0; y < _gridDisplay.Dimensions.Height; y++)
+                {
+                    PathfindingGrid[x, y] = new SearchNode(x, y);
+                }
+            }
+
+            Clear();
+        }
+
+        private void ResetButton_Click(object sender, EventArgs e)
+        {
+            Panel1.Refresh();
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), StartSearchNode._Pos, ProjectColors.StartNode);
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode._Pos, ProjectColors.EndNode);
+
+            UpdateGridLabels();
+            ResetAILabels();
+
+
+            for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
+            {
+                for (int y = 0; y < _gridDisplay.Dimensions.Height; y++)
+                {
+                    SearchNode tmp = PathfindingGrid[x, y];
+                    if (tmp._Walkable == false)
+                    {
+                        _gridDisplay.ColourSquare(Panel1.CreateGraphics(), tmp._Pos, ProjectColors.Wall);
+                    }
+                }
+            }
+
+            OpenHeap.Clear();
+            OpenHeap.Insert(StartSearchNode);
+            ClosedHash.Clear();
+        }
+
+
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            ResetAILabels();
+
+            switch (this.WindowState)
+            {
+                case FormWindowState.Maximized:
+                    //handle maximizing
+                    int w = this.Size.Width - Panel1.Left - 30;
+                    int h = this.Size.Height - Panel1.Top - 50;
+                    Panel1.Size = new Size(w, h);
+
+                    if (!LargeGridButton.Checked)
+                    {
+                        SmallGridButton_CheckedChanged(sender, e);
+                    }
+                    else
+                    {
+                        LargeGridButton_CheckedChanged(sender, e);
+                    }
+                    break;
+
+                case FormWindowState.Minimized:
+                    // Handle minimizing
+                    break;
+
+                case FormWindowState.Normal:
+                    if (!LargeGridButton.Checked)
+                    {
+                        SmallGridButton_CheckedChanged(sender, e);
+                    }
+                    else
+                    {
+                        LargeGridButton_CheckedChanged(sender, e);
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        private void RandomizeButton_Click(object sender, EventArgs e)
+        {
+            if (Convert.ToInt32(GridSizeUpDown.Value) != _lastNumericUpDown && LargeGridButton.Checked)
+            {
+                _lastNumericUpDown = Convert.ToInt32(GridSizeUpDown.Value);
+                LargeGridButton_CheckedChanged(sender, e);
+            }
+
+            UpdateGridLabels();
+
+            Panel1.Refresh();
+
+            StartSearchNode = SearchNode.OutOfIndexNode;
+            EndSearchNode = SearchNode.OutOfIndexNode;
+
+            OpenHeap.Clear();
+            ClosedHash.Clear();
+
+            Random r = new Random();
+            foreach (SearchNode n in PathfindingGrid)
+            {
+                n._Walkable = (r.Next(100) > RandomnessBar.Value);
+                if (!n._Walkable)
+                {
+                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), n._Pos, ProjectColors.Wall);
+                }
+            }
+        }
+
+        // TODO - index out range
+        private void RandomMazeButton_Click(object sender, EventArgs e)
+        {
+            if (Convert.ToInt32(GridSizeUpDown.Value) != _lastNumericUpDown && LargeGridButton.Checked)
+            {
+                _lastNumericUpDown = Convert.ToInt32(GridSizeUpDown.Value);
+                LargeGridButton_CheckedChanged(sender, e);                
+            }
+
+            UpdateGridLabels();
+
+            Panel1.Refresh();
+
+            GenerateMaze();
+
+        }
+
         private void RunAI_Click(object sender, EventArgs e)
         {
             int pathLength = 0;
@@ -293,7 +474,7 @@ namespace PathfindingFun
                         _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode._Pos, ProjectColors.EndNode);
 
                         // Need to add one to the pathLength because the end node counts as part of the path
-                        PathLengthTextBox.Text = (pathLength + 1).ToString(); 
+                        PathLengthTextBox.Text = (pathLength + 1).ToString();
                         ConsideredNodeLengthTextBox.Text = (consideredNodesCount - (pathLength + 1)).ToString();
 
                         break;
@@ -397,188 +578,5 @@ namespace PathfindingFun
                 }
             }
         }
-
-        public void Clear()
-        {
-            StartSearchNode = SearchNode.OutOfIndexNode;
-            EndSearchNode = SearchNode.OutOfIndexNode;
-
-            OpenHeap.Clear();
-            ClosedHash.Clear();
-            Panel1.Invalidate();
-
-            foreach (SearchNode n in PathfindingGrid)
-            {
-                n._Walkable = true;
-            }
-        }
-
-        private void ClearButton_Click(object sender, EventArgs e)
-        {
-            Clear();
-        }
-
-        private void SmallGridButton_CheckedChanged(object sender, EventArgs e)
-        {
-            _gridDisplay = new GridDisplay();
-            _gridDisplay.CellSize = _smallGridPixelSize;
-            _gridDisplay.Dimensions = new Size(Panel1.Width / _smallGridPixelSize, Panel1.Height / _smallGridPixelSize);
-
-            UpdateGridLabels();
-            ResetAILabels();
-
-            PathfindingGrid = new SearchNode[_gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height];
-            for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
-            {
-                for (int y = 0; y < _gridDisplay.Dimensions.Height; y++)
-                {
-                    PathfindingGrid[x, y] = new SearchNode(x, y);
-                }
-            }
-
-            Clear();
-        }
-
-        private void LargeGridButton_CheckedChanged(object sender, EventArgs e)
-        {
-            _gridDisplay = new GridDisplay();
-            _gridDisplay.CellSize = _largeGridPixelSize;
-            _gridDisplay.Dimensions = new Size(Panel1.Width / _largeGridPixelSize, Panel1.Height / _largeGridPixelSize);
-
-            UpdateGridLabels();
-            ResetAILabels();
-
-            PathfindingGrid = new SearchNode[_gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height];
-            for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
-            {
-                for (int y = 0; y < _gridDisplay.Dimensions.Height; y++)
-                {
-                    PathfindingGrid[x, y] = new SearchNode(x, y);
-                }
-            }
-
-            Clear();
-        }
-
-        private void ResetButton_Click(object sender, EventArgs e)
-        {
-            Panel1.Refresh();
-            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), StartSearchNode._Pos, ProjectColors.StartNode);
-            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode._Pos, ProjectColors.EndNode);
-
-            UpdateGridLabels();
-            ResetAILabels();
-
-
-            for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
-            {
-                for (int y = 0; y < _gridDisplay.Dimensions.Height; y++)
-                {
-                    SearchNode tmp = PathfindingGrid[x, y];
-                    if (tmp._Walkable == false)
-                    {
-                        _gridDisplay.ColourSquare(Panel1.CreateGraphics(), tmp._Pos, ProjectColors.Wall);
-                    }
-                }
-            }
-
-            OpenHeap.Clear();
-            OpenHeap.Insert(StartSearchNode);
-            ClosedHash.Clear();
-        }
-
-        private void RandomizeButton_Click(object sender, EventArgs e)
-        {
-            if (Convert.ToInt32(GridSizeUpDown.Value) != _lastNumericUpDown && LargeGridButton.Checked)
-            {
-                _lastNumericUpDown = Convert.ToInt32(GridSizeUpDown.Value);
-                LargeGridButton_CheckedChanged(sender, e);
-            }
-
-            UpdateGridLabels();
-
-            Panel1.Refresh();
-
-            StartSearchNode = SearchNode.OutOfIndexNode;
-            EndSearchNode = SearchNode.OutOfIndexNode;
-
-            OpenHeap.Clear();
-            ClosedHash.Clear();
-
-            Random r = new Random();
-            foreach (SearchNode n in PathfindingGrid)
-            {
-                n._Walkable = (r.Next(100) > RandomnessBar.Value);
-                if (!n._Walkable)
-                {
-                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), n._Pos, ProjectColors.Wall);
-                }
-            }
-        }
-
-        private void Form1_Resize(object sender, EventArgs e)
-        {
-            ResetAILabels();
-
-            switch (this.WindowState)
-            {
-                case FormWindowState.Maximized:
-                    //handle maximizing
-                    int w = this.Size.Width - Panel1.Left - 30;
-                    int h = this.Size.Height - Panel1.Top - 50;
-                    Panel1.Size = new Size(w, h);
-
-                    if (!LargeGridButton.Checked)
-                    {
-                        SmallGridButton_CheckedChanged(sender, e);
-                    }
-                    else
-                    {
-                        LargeGridButton_CheckedChanged(sender, e);
-                    }
-                    break;
-
-                case FormWindowState.Minimized:
-                    // Handle minimizing
-                    break;
-
-                case FormWindowState.Normal:
-                    if (!LargeGridButton.Checked)
-                    {
-                        SmallGridButton_CheckedChanged(sender, e);
-                    }
-                    else
-                    {
-                        LargeGridButton_CheckedChanged(sender, e);
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-
-
-        // TODO - index out range
-        private void RandomMazeButton_Click(object sender, EventArgs e)
-        {
-            if (Convert.ToInt32(GridSizeUpDown.Value) != _lastNumericUpDown && LargeGridButton.Checked)
-            {
-                _lastNumericUpDown = Convert.ToInt32(GridSizeUpDown.Value);
-                LargeGridButton_CheckedChanged(sender, e);                
-            }
-
-            UpdateGridLabels();
-
-            Panel1.Refresh();
-
-            GenerateMaze();
-
-        }
-
-
-
-
     }
 }
