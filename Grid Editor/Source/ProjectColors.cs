@@ -7,6 +7,9 @@ namespace PathfindingFun
     /// </summary>
     class ProjectColors
     {
+        //public static readonly Color FormColor = Color.LightSteelBlue;
+        public static readonly Color FormColor = Color.FromArgb(255, 222, 235, 244);
+
         public static readonly Color GridLines = Color.LightGray;
         public static readonly Color Text = Color.Black;
         public static readonly Color Wall = Color.CornflowerBlue;

@@ -42,6 +42,10 @@ namespace PathfindingFun
             // get last numeric up down
                         
             this.MinimumSize = this.Size;
+            this.BackColor = ProjectColors.FormColor;
+
+            RandomnessBar.BackColor = ProjectColors.FormColor;
+
             Panel1.MinimumSize = Panel1.Size;
             Panel1.BackColor = ProjectColors.Clear;
 
