@@ -7,6 +7,9 @@ using System.Linq;
 
 namespace PathfindingFun
 {
+    /// <summary>
+    /// Extra methods for helping with Binary Heaps
+    /// </summary>
     static class BinaryHeapExtension
     {
         // Data source, index a, index b
@@ -28,6 +31,9 @@ namespace PathfindingFun
         }
     }
 
+    /// <summary>
+    /// A Generic Binary Heap implementation
+    /// </summary>
     public class BinaryHeap<T> where T : IComparable, IComparable<T>
     {
         List<T> _heap;

@@ -2,6 +2,9 @@
 
 namespace PathfindingFun
 {
+    /// <summary>
+    /// Definitions for all colors across the project
+    /// </summary>
     class ProjectColors
     {
         public static readonly Color GridLines = Color.LightGray;

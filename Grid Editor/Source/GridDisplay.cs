@@ -4,7 +4,7 @@ using System.Drawing;
 namespace PathfindingFun
 {
     /// <summary>
-    /// Class responsible for drawing the grid and nodes.
+    /// Class responsible for drawing the grid, nodes and weights.
     /// </summary>
     class GridDisplay
     {
