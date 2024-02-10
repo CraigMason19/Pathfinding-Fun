@@ -30,7 +30,7 @@ namespace PathfindingFun
             InitializeComponent();
 
             FormSetup();
-            GridSetup();
+            GridSetup(_smallGridPixelSize);
             NodeSetup();
         }
 
@@ -39,7 +39,6 @@ namespace PathfindingFun
         private void FormSetup()
         {
             HeuristicComboBox.SelectedIndex = 0;
-            // get last numeric up down
                         
             this.MinimumSize = this.Size;
             this.BackColor = ProjectColors.FormColor;
@@ -50,19 +49,17 @@ namespace PathfindingFun
             Panel1.BackColor = ProjectColors.Clear;
 
             _mouse = new Mouse();
+            _lastNumericUpDown = Convert.ToInt32(GridSizeUpDown.Value);
 
-            ResetAILabels();
+            _smallGridPixelSize = 30;
+            _largeGridPixelSize = Convert.ToInt32(GridSizeUpDown.Value);
         }
 
-        private void GridSetup()
+        private void GridSetup(int pixelSize)
         {
-            _smallGridPixelSize = 30;
-            _lastNumericUpDown = Convert.ToInt32(GridSizeUpDown.Value);
-            _largeGridPixelSize = Convert.ToInt32(GridSizeUpDown.Value);
-
             _gridDisplay = new GridDisplay();
-            _gridDisplay.CellSize = _smallGridPixelSize;
-            _gridDisplay.Dimensions = new Size(Panel1.Width / _smallGridPixelSize, Panel1.Height / _smallGridPixelSize);
+            _gridDisplay.CellSize = pixelSize;
+            _gridDisplay.Dimensions = new Size(Panel1.Width / pixelSize, Panel1.Height / pixelSize);
 
             UpdateGridLabels();
         }
@@ -94,6 +91,8 @@ namespace PathfindingFun
                     PathfindingGrid[x, y] = new SearchNode(x, y);
                 }
             }
+
+            ResetAILabels();
         }
 
         #endregion
@@ -277,11 +276,17 @@ namespace PathfindingFun
 
             OpenHeap.Clear();
             ClosedHash.Clear();
+            ResetAILabels();
+
             Panel1.Invalidate();
 
-            foreach (SearchNode n in PathfindingGrid)
+            PathfindingGrid = new SearchNode[_gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height];
+            for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
             {
-                n._Walkable = true;
+                for (int y = 0; y < _gridDisplay.Dimensions.Height; y++)
+                {
+                    PathfindingGrid[x, y] = new SearchNode(x, y);
+                }
             }
         }
 
@@ -292,43 +297,13 @@ namespace PathfindingFun
 
         private void SmallGridButton_CheckedChanged(object sender, EventArgs e)
         {
-            _gridDisplay = new GridDisplay();
-            _gridDisplay.CellSize = _smallGridPixelSize;
-            _gridDisplay.Dimensions = new Size(Panel1.Width / _smallGridPixelSize, Panel1.Height / _smallGridPixelSize);
-
-            UpdateGridLabels();
-            ResetAILabels();
-
-            PathfindingGrid = new SearchNode[_gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height];
-            for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
-            {
-                for (int y = 0; y < _gridDisplay.Dimensions.Height; y++)
-                {
-                    PathfindingGrid[x, y] = new SearchNode(x, y);
-                }
-            }
-
+            GridSetup(_smallGridPixelSize);
             Clear();
         }
 
         private void LargeGridButton_CheckedChanged(object sender, EventArgs e)
         {
-            _gridDisplay = new GridDisplay();
-            _gridDisplay.CellSize = _largeGridPixelSize;
-            _gridDisplay.Dimensions = new Size(Panel1.Width / _largeGridPixelSize, Panel1.Height / _largeGridPixelSize);
-
-            UpdateGridLabels();
-            ResetAILabels();
-
-            PathfindingGrid = new SearchNode[_gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height];
-            for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
-            {
-                for (int y = 0; y < _gridDisplay.Dimensions.Height; y++)
-                {
-                    PathfindingGrid[x, y] = new SearchNode(x, y);
-                }
-            }
-
+            GridSetup(_largeGridPixelSize);
             Clear();
         }
 
@@ -338,10 +313,9 @@ namespace PathfindingFun
             _gridDisplay.ColourSquare(Panel1.CreateGraphics(), StartSearchNode._Pos, ProjectColors.StartNode);
             _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode._Pos, ProjectColors.EndNode);
 
-            UpdateGridLabels();
             ResetAILabels();
 
-
+            // Keep any walls that exists so we can run it again
             for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
             {
                 for (int y = 0; y < _gridDisplay.Dimensions.Height; y++)
@@ -406,8 +380,6 @@ namespace PathfindingFun
                 LargeGridButton_CheckedChanged(sender, e);
             }
 
-            UpdateGridLabels();
-
             Panel1.Refresh();
 
             StartSearchNode = SearchNode.OutOfIndexNode;
@@ -434,8 +406,6 @@ namespace PathfindingFun
                 _lastNumericUpDown = Convert.ToInt32(GridSizeUpDown.Value);
                 LargeGridButton_CheckedChanged(sender, e);                
             }
-
-            UpdateGridLabels();
 
             Panel1.Refresh();
 

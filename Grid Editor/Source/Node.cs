@@ -37,7 +37,7 @@ namespace PathfindingFun
             _G = 0;
             _H = 0.0f;
             _Parent = _Pos;
-            _Walkable = false;
+            _Walkable = true;
         }
 
         public SearchNode(Point pos, int g = 0)
