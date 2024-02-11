@@ -9,7 +9,6 @@ namespace PathfindingFun
     {
         // General
         Mouse _mouse;
-        int _lastNumericUpDown;
 
         // Grid
         GridDisplay _gridDisplay;
@@ -49,7 +48,6 @@ namespace PathfindingFun
             Panel1.BackColor = ProjectColors.Clear;
 
             _mouse = new Mouse();
-            _lastNumericUpDown = Convert.ToInt32(GridSizeUpDown.Value);
 
             _smallGridPixelSize = 30;
             _largeGridPixelSize = Convert.ToInt32(GridSizeUpDown.Value);
@@ -210,7 +208,7 @@ namespace PathfindingFun
 
         private void SmallGridButton_Click(object sender, EventArgs e)
         {
-            Clear();
+            SmallGridButton_CheckedChanged(sender, e);
         }
 
         private void LargeGridButton_Click(object sender, EventArgs e)
@@ -221,6 +219,9 @@ namespace PathfindingFun
         private void GridSizeUpDown_ValueChanged(object sender, EventArgs e)
         {
             _largeGridPixelSize = Convert.ToInt32(GridSizeUpDown.Value);
+            SmallGridButton.Checked = false;
+            LargeGridButton.Checked = true;
+            LargeGridButton_CheckedChanged(sender, e);
         }
 
         private void HeuristicComboBox_SelectedValueChanged(object sender, EventArgs e)
@@ -374,12 +375,6 @@ namespace PathfindingFun
 
         private void RandomizeButton_Click(object sender, EventArgs e)
         {
-            if (Convert.ToInt32(GridSizeUpDown.Value) != _lastNumericUpDown && LargeGridButton.Checked)
-            {
-                _lastNumericUpDown = Convert.ToInt32(GridSizeUpDown.Value);
-                LargeGridButton_CheckedChanged(sender, e);
-            }
-
             Panel1.Refresh();
 
             StartSearchNode = SearchNode.OutOfIndexNode;
@@ -401,16 +396,8 @@ namespace PathfindingFun
 
         private void RandomMazeButton_Click(object sender, EventArgs e)
         {
-            if (Convert.ToInt32(GridSizeUpDown.Value) != _lastNumericUpDown && LargeGridButton.Checked)
-            {
-                _lastNumericUpDown = Convert.ToInt32(GridSizeUpDown.Value);
-                LargeGridButton_CheckedChanged(sender, e);                
-            }
-
             Panel1.Refresh();
-
             GenerateMaze();
-
         }
 
         private void RunAI_Click(object sender, EventArgs e)
@@ -546,7 +533,5 @@ namespace PathfindingFun
                 }
             }
         }
-
-
     }
 }
