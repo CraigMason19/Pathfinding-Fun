@@ -16,13 +16,13 @@ namespace PathfindingFun
         int _largeGridPixelSize;
          
         // Search nodes
-        SearchNode StartSearchNode;
-        SearchNode EndSearchNode;
+        SearchNode _startSearchNode;
+        SearchNode _endSearchNode;
+        SearchNode[,] _pathfindingGrid;
+
         Dictionary<string, SearchNode> OffsetSearchNodes;
-        BinaryHeap<SearchNode> OpenHeap; // Faster as we don't constantly sort a list 
-        HashSet<SearchNode> ClosedHash;  // Lookup for HashSet is O(1) and List is O(N)
-                                         // Could always just add a boolean to the search node to show if it is on the closed list
-        SearchNode[,] PathfindingGrid;
+        BinaryHeap<SearchNode> _openHeap; // Faster as we don't constantly sort a list 
+        HashSet<SearchNode> _closedHash;  // Lookup for HashSet is O(1) and List is O(N). Also prevents duplicates
 
         public MainForm()
         {
@@ -55,9 +55,11 @@ namespace PathfindingFun
 
         private void GridSetup(int pixelSize)
         {
-            _gridDisplay = new GridDisplay();
-            _gridDisplay.CellSize = pixelSize;
-            _gridDisplay.Dimensions = new Size(Panel1.Width / pixelSize, Panel1.Height / pixelSize);
+            _gridDisplay = new GridDisplay
+            {
+                CellSize = pixelSize,
+                Dimensions = new Size(Panel1.Width / pixelSize, Panel1.Height / pixelSize)
+            };
 
             UpdateGridLabels();
         }
@@ -65,28 +67,30 @@ namespace PathfindingFun
         private void NodeSetup()
         {
             // SearchNode setup
-            StartSearchNode = SearchNode.OutOfIndexNode;
-            EndSearchNode = SearchNode.OutOfIndexNode;
+            _startSearchNode = SearchNode.OutOfIndexNode;
+            _endSearchNode = SearchNode.OutOfIndexNode;
 
-            OffsetSearchNodes = new Dictionary<string, SearchNode>();
-            OffsetSearchNodes["S"] = new SearchNode(0, 1, 10);    // Down
-            OffsetSearchNodes["SE"] = new SearchNode(1, 1, 14);   // Down Right
-            OffsetSearchNodes["E"] = new SearchNode(1, 0, 10);    // Right
-            OffsetSearchNodes["NE"] = new SearchNode(1, -1, 14);  // Up Right
-            OffsetSearchNodes["N"] = new SearchNode(0, -1, 10);   // Up
-            OffsetSearchNodes["NW"] = new SearchNode(-1, -1, 14); // Up Left
-            OffsetSearchNodes["W"] = new SearchNode(-1, 0, 10);   // Left
-            OffsetSearchNodes["SW"] = new SearchNode(-1, 1, 14);  // Down Left
+            OffsetSearchNodes = new Dictionary<string, SearchNode>
+            {
+                ["S"] = new SearchNode(0, 1, 10),    // Down
+                ["SE"] = new SearchNode(1, 1, 14),   // Down Right
+                ["E"] = new SearchNode(1, 0, 10),    // Right
+                ["NE"] = new SearchNode(1, -1, 14),  // Up Right
+                ["N"] = new SearchNode(0, -1, 10),   // Up
+                ["NW"] = new SearchNode(-1, -1, 14), // Up Left
+                ["W"] = new SearchNode(-1, 0, 10),   // Left
+                ["SW"] = new SearchNode(-1, 1, 14)  // Down Left
+            };
 
-            OpenHeap = new BinaryHeap<SearchNode>();
-            ClosedHash = new HashSet<SearchNode>(new SearchNodeComparer());
+            _openHeap = new BinaryHeap<SearchNode>();
+            _closedHash = new HashSet<SearchNode>(new SearchNodeComparer());
 
-            PathfindingGrid = new SearchNode[_gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height];
+            _pathfindingGrid = new SearchNode[_gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height];
             for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
             {
                 for (int y = 0; y < _gridDisplay.Dimensions.Height; y++)
                 {
-                    PathfindingGrid[x, y] = new SearchNode(x, y);
+                    _pathfindingGrid[x, y] = new SearchNode(x, y);
                 }
             }
 
@@ -123,11 +127,11 @@ namespace PathfindingFun
 
         #region Mouse
 
-        private void panel1_MouseMove(object sender, MouseEventArgs e)
+        private void Panel1_MouseMove(object sender, MouseEventArgs e)
         {
             UpdateMouseLabels();
 
-            _mouse.Moved = (_mouse.Grid != _mouse.LastPoint) ? true : false;
+            _mouse.Moved = (_mouse.Grid != _mouse.LastPoint);
             _mouse.LastPoint = _mouse.Grid;
 
             // If the left mouse button is clicked, can draw extra walls.
@@ -137,7 +141,7 @@ namespace PathfindingFun
                     Helper.IsInRange(0, _gridDisplay.Dimensions.Height - 1, _mouse.Grid.Y))
                 {
                     _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, ProjectColors.Wall);
-                    PathfindingGrid[_mouse.Grid.X, _mouse.Grid.Y].Walkable = false;
+                    _pathfindingGrid[_mouse.Grid.X, _mouse.Grid.Y].Walkable = false;
                 }
             }
 
@@ -147,7 +151,7 @@ namespace PathfindingFun
             }
         }
 
-        private void panel1_MouseDown(object sender, MouseEventArgs e)
+        private void Panel1_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
@@ -156,12 +160,12 @@ namespace PathfindingFun
                     Helper.IsInRange(0, _gridDisplay.Dimensions.Height - 1, _mouse.Grid.Y))
                 {
                     _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, ProjectColors.Wall);
-                    PathfindingGrid[_mouse.Grid.X, _mouse.Grid.Y].Walkable = false;
+                    _pathfindingGrid[_mouse.Grid.X, _mouse.Grid.Y].Walkable = false;
                 }
             }
         }
 
-        private void panel1_MouseClick(object sender, MouseEventArgs e)
+        private void Panel1_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -176,30 +180,30 @@ namespace PathfindingFun
 
         private void StartSearchNode_Click(object sender, System.EventArgs e)
         {
-            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), StartSearchNode.ToPoint(), ProjectColors.Clear);
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _startSearchNode.ToPoint(), ProjectColors.Clear);
             _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, ProjectColors.StartNode);
             if (SmallGridButton.Checked)
             {
                 _gridDisplay.DrawGridLines(Panel1.CreateGraphics());
             }
 
-            StartSearchNode = new SearchNode(_mouse.Grid, 0);
-            OpenHeap.Clear();
-            OpenHeap.Insert(StartSearchNode);
-            PathfindingGrid[StartSearchNode.Pos.X, StartSearchNode.Pos.Y].Walkable = true;
+            _startSearchNode = new SearchNode(_mouse.Grid, 0);
+            _openHeap.Clear();
+            _openHeap.Insert(_startSearchNode);
+            _pathfindingGrid[_startSearchNode.Pos.X, _startSearchNode.Pos.Y].Walkable = true;
         }
 
         private void EndSearchNode_Click(object sender, System.EventArgs e)
         {
-            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode.ToPoint(), ProjectColors.Clear);
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _endSearchNode.ToPoint(), ProjectColors.Clear);
             _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, ProjectColors.EndNode);
             if (SmallGridButton.Checked)
             {
                 _gridDisplay.DrawGridLines(Panel1.CreateGraphics());
             }
 
-            EndSearchNode = new SearchNode(_mouse.Grid, 0);
-            PathfindingGrid[EndSearchNode.Pos.X, EndSearchNode.Pos.Y].Walkable = true;
+            _endSearchNode = new SearchNode(_mouse.Grid, 0);
+            _pathfindingGrid[_endSearchNode.Pos.X, _endSearchNode.Pos.Y].Walkable = true;
         }
 
         #endregion
@@ -259,7 +263,7 @@ namespace PathfindingFun
 
         #endregion
 
-        private void panel1_Paint(object sender, PaintEventArgs e)
+        private void Panel1_Paint(object sender, PaintEventArgs e)
         {
             if (SmallGridButton.Checked)
             {
@@ -272,21 +276,21 @@ namespace PathfindingFun
 
         public void Clear()
         {
-            StartSearchNode = SearchNode.OutOfIndexNode;
-            EndSearchNode = SearchNode.OutOfIndexNode;
+            _startSearchNode = SearchNode.OutOfIndexNode;
+            _endSearchNode = SearchNode.OutOfIndexNode;
 
-            OpenHeap.Clear();
-            ClosedHash.Clear();
+            _openHeap.Clear();
+            _closedHash.Clear();
             ResetAILabels();
 
             Panel1.Invalidate();
 
-            PathfindingGrid = new SearchNode[_gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height];
+            _pathfindingGrid = new SearchNode[_gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height];
             for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
             {
                 for (int y = 0; y < _gridDisplay.Dimensions.Height; y++)
                 {
-                    PathfindingGrid[x, y] = new SearchNode(x, y);
+                    _pathfindingGrid[x, y] = new SearchNode(x, y);
                 }
             }
         }
@@ -311,8 +315,8 @@ namespace PathfindingFun
         private void ResetButton_Click(object sender, EventArgs e)
         {
             Panel1.Refresh();
-            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), StartSearchNode.Pos, ProjectColors.StartNode);
-            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode.Pos, ProjectColors.EndNode);
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _startSearchNode.Pos, ProjectColors.StartNode);
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _endSearchNode.Pos, ProjectColors.EndNode);
 
             ResetAILabels();
 
@@ -321,7 +325,7 @@ namespace PathfindingFun
             {
                 for (int y = 0; y < _gridDisplay.Dimensions.Height; y++)
                 {
-                    SearchNode tmp = PathfindingGrid[x, y];
+                    SearchNode tmp = _pathfindingGrid[x, y];
                     if (tmp.Walkable == false)
                     {
                         _gridDisplay.ColourSquare(Panel1.CreateGraphics(), tmp.Pos, ProjectColors.Wall);
@@ -329,9 +333,9 @@ namespace PathfindingFun
                 }
             }
 
-            OpenHeap.Clear();
-            OpenHeap.Insert(StartSearchNode);
-            ClosedHash.Clear();
+            _openHeap.Clear();
+            _openHeap.Insert(_startSearchNode);
+            _closedHash.Clear();
 
             if (SmallGridButton.Checked)
             {
@@ -377,14 +381,14 @@ namespace PathfindingFun
         {
             Panel1.Refresh();
 
-            StartSearchNode = SearchNode.OutOfIndexNode;
-            EndSearchNode = SearchNode.OutOfIndexNode;
+            _startSearchNode = SearchNode.OutOfIndexNode;
+            _endSearchNode = SearchNode.OutOfIndexNode;
 
-            OpenHeap.Clear();
-            ClosedHash.Clear();
+            _openHeap.Clear();
+            _closedHash.Clear();
 
             Random r = new Random();
-            foreach (SearchNode n in PathfindingGrid)
+            foreach (SearchNode n in _pathfindingGrid)
             {
                 n.Walkable = (r.Next(100) > RandomnessBar.Value);
                 if (!n.Walkable)
@@ -408,25 +412,25 @@ namespace PathfindingFun
             SearchNode current = SearchNode.OutOfIndexNode;
 
             // Have we got a start and a destination?
-            if (StartSearchNode != SearchNode.OutOfIndexNode && EndSearchNode != SearchNode.OutOfIndexNode)
+            if (_startSearchNode != SearchNode.OutOfIndexNode && _endSearchNode != SearchNode.OutOfIndexNode)
             {
-                while (!OpenHeap.IsEmpty())
+                while (!_openHeap.IsEmpty())
                 {
-                    current = OpenHeap.Peek(); // Just look at lowest f
+                    current = _openHeap.Peek(); // Just look at lowest f
 
                     // Finished!?
-                    if (current == EndSearchNode)
+                    if (current == _endSearchNode)
                     {
-                        Point p = PathfindingGrid[current.Pos.X, current.Pos.Y].Parent;// _Pos;
-                        while (!(p == StartSearchNode.Pos))
+                        Point p = _pathfindingGrid[current.Pos.X, current.Pos.Y].Parent;// _Pos;
+                        while (!(p == _startSearchNode.Pos))
                         {
                             _gridDisplay.ColourSquare(Panel1.CreateGraphics(), p, ProjectColors.Path);
-                            p = PathfindingGrid[p.X, p.Y].Parent;
+                            p = _pathfindingGrid[p.X, p.Y].Parent;
                             pathLength++;
                         }
 
                         // Redraw the end node as it was put onto the considered nodes list 
-                        _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode.Pos, ProjectColors.EndNode);
+                        _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _endSearchNode.Pos, ProjectColors.EndNode);
 
                         // Need to add one to the pathLength because the end node counts as part of the path
                         PathLengthTextBox.Text = (pathLength + 1).ToString();
@@ -436,18 +440,18 @@ namespace PathfindingFun
                     }
 
                     // Begin pathfinding
-                    current = OpenHeap.PopMin(); // Now grab lowest f
-                    ClosedHash.Add(current);
+                    current = _openHeap.PopMin(); // Now grab lowest f
+                    _closedHash.Add(current);
 
                     // Find neighbours we can travel to
-                    string[] neighbourKeys = new string[] { };
+                    string[] neighbourKeys;
                     if (!DiagonalCheckBox.Checked)
                     {
-                        neighbourKeys = AI.GetCardinalKeys(PathfindingGrid, current);
+                        neighbourKeys = AI.GetCardinalKeys(_pathfindingGrid, current);
                     }
                     else
                     {
-                        neighbourKeys = AI.GetCardinalAndOrdinalKeys(PathfindingGrid, current);
+                        neighbourKeys = AI.GetCardinalAndOrdinalKeys(_pathfindingGrid, current);
                     }
 
                     foreach (string key in neighbourKeys)
@@ -457,15 +461,15 @@ namespace PathfindingFun
 
                         int tentativeG = current.G + neighbour.G;
 
-                        if (ClosedHash.Contains(tmp) && tentativeG >= neighbour.G)
+                        if (_closedHash.Contains(tmp) && tentativeG >= neighbour.G)
                         {
                             continue;
                         }
 
-                        if (!OpenHeap.Contains(tmp) || tentativeG < neighbour.G)
+                        if (!_openHeap.Contains(tmp) || tentativeG < neighbour.G)
                         {
                             //tmp._Parent = current._Pos;
-                            PathfindingGrid[tmp.Pos.X, tmp.Pos.Y].Parent = current.Pos;
+                            _pathfindingGrid[tmp.Pos.X, tmp.Pos.Y].Parent = current.Pos;
                             tmp.G = tentativeG;
 
                             // Decide which hueristic to use. We use 10.0f for cardinal directions and 14.0f for ordinal 
@@ -474,15 +478,15 @@ namespace PathfindingFun
                             switch (HeuristicComboBox.SelectedItem.ToString())
                             {
                                 case "Manhatten":
-                                    tmp.H = AI.ManhattanDistance(tmp.Pos, EndSearchNode.Pos, 10.0f);
+                                    tmp.H = AI.ManhattanDistance(tmp.Pos, _endSearchNode.Pos, 10.0f);
                                     break;
 
                                 case "Diagonal Distance":
-                                    tmp.H = AI.DiagonalDistance(tmp.Pos, EndSearchNode.Pos, 10.0f, 14.0f);
+                                    tmp.H = AI.DiagonalDistance(tmp.Pos, _endSearchNode.Pos, 10.0f, 14.0f);
                                     break;
 
                                 case "Euclidean Distance":
-                                    tmp.H = AI.EuclideanDistance(tmp.Pos, EndSearchNode.Pos, 14.0f);
+                                    tmp.H = AI.EuclideanDistance(tmp.Pos, _endSearchNode.Pos, 14.0f);
                                     break;
 
                                 case "None":
@@ -498,7 +502,7 @@ namespace PathfindingFun
                             // straight line from the start to the goal 
                             if (TieBreakerCheckBox.Checked)
                             {
-                                tmp.H += AI.GetTieBreakerScale(tmp.Pos, StartSearchNode.Pos, EndSearchNode.Pos);
+                                tmp.H += AI.GetTieBreakerScale(tmp.Pos, _startSearchNode.Pos, _endSearchNode.Pos);
                             }
 
                             consideredNodesCount++;
@@ -513,9 +517,9 @@ namespace PathfindingFun
                                 }
                             }
 
-                            if (!OpenHeap.Contains(tmp))
+                            if (!_openHeap.Contains(tmp))
                             {
-                                OpenHeap.Insert(tmp);
+                                _openHeap.Insert(tmp);
                             }
                         }
                     }
@@ -527,7 +531,7 @@ namespace PathfindingFun
                 }
 
 
-                if (current != EndSearchNode)
+                if (current != _endSearchNode)
                 {
                     // No solution found   
                 }

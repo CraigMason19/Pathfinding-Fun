@@ -1,19 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Drawing;
 
 namespace PathfindingFun
 {
     class AI
     {
-        // for square
-        public static Point[] _CardinalOffset = { new Point(0, -1), new Point(1, 0), new Point(0, 1), new Point(-1, 0) };
-        public static Point[] _OrdinalOffset = { new Point(1, 0), new Point(1, 1), new Point(0, 1), new Point(-1, 1),
-                                                 new Point(-1, 0), new Point(-1, -1), new Point(0, -1), new Point(1, -1)};
+        public static Point[] CardinalOffset = { 
+            new Point(0, -1), new Point(1, 0), new Point(0, 1), new Point(-1, 0) 
+        };
 
-        // Cardinal = N E S W
+        public static Point[] OrdinalOffset = { 
+            new Point(1, 0), new Point(1, 1), new Point(0, 1), new Point(-1, 1),
+            new Point(-1, 0), new Point(-1, -1), new Point(0, -1), new Point(1, -1)
+        };
+
+        /// <summary>
+        /// Cardinal = N E S W 
+        /// </summary>
         static public string[] GetCardinalKeys(SearchNode[,] searchGrid, SearchNode current)
         {
             string[] keys = new string[] { "N", "E", "S", "W" };
@@ -22,7 +26,7 @@ namespace PathfindingFun
             {
                 try
                 {
-                    if (!searchGrid[current.Pos.X + _CardinalOffset[i].X, current.Pos.Y + _CardinalOffset[i].Y].Walkable)
+                    if (!searchGrid[current.Pos.X + CardinalOffset[i].X, current.Pos.Y + CardinalOffset[i].Y].Walkable)
                     {
                         keys[i] = "";
                     }
@@ -36,7 +40,9 @@ namespace PathfindingFun
             return keys.Where(key => key != "").ToArray();
         }
 
-        // Cardinal = N E S W, Ordinal = NE SE SW NE
+        /// <summary>
+        /// Cardinal = N E S W, Ordinal = NE SE SW NE
+        /// </summary>
         static public string[] GetCardinalAndOrdinalKeys(SearchNode[,] searchGrid, SearchNode current)
         {
             string[] keys = new string[] { "E", "SE", "S", "SW", "W", "NW", "N", "NE" };

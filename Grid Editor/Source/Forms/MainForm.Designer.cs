@@ -80,10 +80,10 @@
             this.Panel1.Name = "Panel1";
             this.Panel1.Size = new System.Drawing.Size(660, 600);
             this.Panel1.TabIndex = 0;
-            this.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
-            this.Panel1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseClick);
-            this.Panel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseDown);
-            this.Panel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseMove);
+            this.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.Panel1_Paint);
+            this.Panel1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Panel1_MouseClick);
+            this.Panel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Panel1_MouseDown);
+            this.Panel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Panel1_MouseMove);
             // 
             // MouseScreenTextBox
             // 

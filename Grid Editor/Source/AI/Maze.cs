@@ -10,11 +10,11 @@ namespace PathfindingFun
     {
         public void GenerateMaze()
         {
-            StartSearchNode = SearchNode.OutOfIndexNode;
-            EndSearchNode = SearchNode.OutOfIndexNode;
+            _startSearchNode = SearchNode.OutOfIndexNode;
+            _endSearchNode = SearchNode.OutOfIndexNode;
 
-            OpenHeap.Clear();
-            ClosedHash.Clear();
+            _openHeap.Clear();
+            _closedHash.Clear();
 
             Form MazeLoadingForm = null;
 
@@ -33,7 +33,7 @@ namespace PathfindingFun
 
             // Primm
             // 1. Start with grid full of walls
-            foreach (SearchNode n in PathfindingGrid)
+            foreach (SearchNode n in _pathfindingGrid)
             {
                 n.Walkable = false;
             }
@@ -48,7 +48,7 @@ namespace PathfindingFun
             int b = rnd.Next(_gridDisplay.Dimensions.Height / 2 - 1);
             MazeNode passage = new MazeNode(a, b);
             MazeNode opposite = new MazeNode(a, b);
-            PathfindingGrid[opposite.X, opposite.Y].Walkable = true;
+            _pathfindingGrid[opposite.X, opposite.Y].Walkable = true;
 
             // Add neighbour nodes (north and south not walkable)
             wallList.Add(new MazeNode(passage.X + 1, passage.Y, 'E')); // add the passage
@@ -82,14 +82,14 @@ namespace PathfindingFun
                 // if the cell on the opposite side isn't in the maze yet
                 //var match = wallList.FindIndex(x => x.Equals(passage));
                 //if (match == -1)
-                if (PathfindingGrid[opposite.X, opposite.Y].Walkable == false)
+                if (_pathfindingGrid[opposite.X, opposite.Y].Walkable == false)
                 {
                     // make the wall a passage and mark the cell on the opposite side as part of the maze
-                    PathfindingGrid[passage.X, passage.Y].Walkable = true;
-                    PathfindingGrid[opposite.X, opposite.Y].Walkable = true;
+                    _pathfindingGrid[passage.X, passage.Y].Walkable = true;
+                    _pathfindingGrid[opposite.X, opposite.Y].Walkable = true;
 
                     // add the neighbouring walls of the cell to the wall list
-                    string[] keys = opposite.GetNeighbours(PathfindingGrid, opposite);
+                    string[] keys = opposite.GetNeighbours(_pathfindingGrid, opposite);
                     if (keys[0] == "N")
                     {
                         wallList.Add(new MazeNode(opposite.X, opposite.Y - 1, 'N')); // add the passage
@@ -118,13 +118,10 @@ namespace PathfindingFun
                 }
             }
 
-            if (MazeLoadingForm != null)
-            {
-                MazeLoadingForm.Dispose();
-            }
+            MazeLoadingForm?.Dispose();
 
             // Finally draw
-            foreach (SearchNode n in PathfindingGrid)
+            foreach (SearchNode n in _pathfindingGrid)
             {
                 if (!n.Walkable)
                 {
