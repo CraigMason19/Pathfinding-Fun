@@ -11,12 +11,12 @@ namespace PathfindingFun
     {
         public bool Equals(SearchNode a, SearchNode b)
         {
-            return (a._Pos.X == b._Pos.X) && (a._Pos.Y == b._Pos.Y);
+            return (a.Pos.X == b.Pos.X) && (a.Pos.Y == b.Pos.Y);
         }
 
         public int GetHashCode(SearchNode obj)
         {
-            return obj._Pos.GetHashCode();
+            return obj.Pos.GetHashCode();
         }
     }
 
@@ -28,42 +28,42 @@ namespace PathfindingFun
         public static SearchNode OutOfIndexNode = new SearchNode(-1, -1);
         public static SearchNode OriginNode = new SearchNode();
 
-        public Point _Pos { get; set; }
-        public int _G { get; set; }
-        public float _H { get; set; }
-        public Point _Parent { get; set; }
-        public bool _Walkable { get; set; }   
+        public Point Pos { get; set; }
+        public int G { get; set; }
+        public float H { get; set; }
+        public Point Parent { get; set; }
+        public bool Walkable { get; set; }   
 
         public SearchNode()
         {
-            _Pos = new Point(0,0);
-            _G = 0;
-            _H = 0.0f;
-            _Parent = _Pos;
-            _Walkable = true;
+            Pos = new Point(0, 0);
+            G = 0;
+            H = 0.0f;
+            Parent = new Point(0, 0);
+            Walkable = true;
         }
 
         public SearchNode(Point pos, int g = 0)
         {
-            _Pos = pos;
-            _G = g;
-            _H = 0.0f; 
-            _Parent = new Point(0, 0);
-            _Walkable = true;
+            Pos = pos;
+            G = g;
+            H = 0.0f; 
+            Parent = new Point(0, 0);
+            Walkable = true;
         }
 
         public SearchNode(int x, int y, int g = 0)
         {
-            _Pos = new Point(x, y);
-            _G = g;
-            _H = 0.0f; 
-            _Parent = new Point(0, 0);
-            _Walkable = true;
+            Pos = new Point(x, y);
+            G = g;
+            H = 0.0f; 
+            Parent = new Point(0, 0);
+            Walkable = true;
         }
 
         public static SearchNode operator+(SearchNode a, SearchNode b)
         {
-            return new SearchNode(new Point(a._Pos.X + b._Pos.X, a._Pos.Y + b._Pos.Y), a._G + b._G);
+            return new SearchNode(new Point(a.Pos.X + b.Pos.X, a.Pos.Y + b.Pos.Y), a.G + b.G);
         }
 
         public static bool operator==(SearchNode a, SearchNode b)
@@ -81,7 +81,7 @@ namespace PathfindingFun
             }
 
             // Return true if the fields match:
-            return a._Pos.X == b._Pos.X && a._Pos.Y == b._Pos.Y;
+            return a.Pos.X == b.Pos.X && a.Pos.Y == b.Pos.Y;
         }
 
         public override bool Equals(object obj)
@@ -94,7 +94,7 @@ namespace PathfindingFun
             if (obj is SearchNode)
             {
                 SearchNode n = obj as SearchNode;
-                return n._Pos.X == this._Pos.X && n._Pos.Y == this._Pos.Y;
+                return n.Pos.X == this.Pos.X && n.Pos.Y == this.Pos.Y;
             }
 
             return false;
@@ -107,17 +107,17 @@ namespace PathfindingFun
 
         public override string ToString()
         {
-            return(String.Format("[{0},{1}]", _Pos.X, _Pos.Y));
+            return(String.Format("[{0},{1}]", Pos.X, Pos.Y));
         }
 
         public Point ToPoint()
         {
-            return new Point(_Pos.X, _Pos.Y);
+            return new Point(Pos.X, Pos.Y);
         }
 
         public int CompareTo(SearchNode b)
         {
-            return (_H + (float)_G).CompareTo(b._H + (float)b._G);
+            return (H + (float)G).CompareTo(b.H + (float)b.G);
         }
 
         public int CompareTo(object obj)
@@ -128,7 +128,7 @@ namespace PathfindingFun
 
         public override int GetHashCode()
         {
-            return _Pos.GetHashCode();
+            return Pos.GetHashCode();
         }
     }
 }

@@ -137,7 +137,7 @@ namespace PathfindingFun
                     Helper.IsInRange(0, _gridDisplay.Dimensions.Height - 1, _mouse.Grid.Y))
                 {
                     _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, ProjectColors.Wall);
-                    PathfindingGrid[_mouse.Grid.X, _mouse.Grid.Y]._Walkable = false;
+                    PathfindingGrid[_mouse.Grid.X, _mouse.Grid.Y].Walkable = false;
                 }
             }
 
@@ -156,7 +156,7 @@ namespace PathfindingFun
                     Helper.IsInRange(0, _gridDisplay.Dimensions.Height - 1, _mouse.Grid.Y))
                 {
                     _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, ProjectColors.Wall);
-                    PathfindingGrid[_mouse.Grid.X, _mouse.Grid.Y]._Walkable = false;
+                    PathfindingGrid[_mouse.Grid.X, _mouse.Grid.Y].Walkable = false;
                 }
             }
         }
@@ -186,7 +186,7 @@ namespace PathfindingFun
             StartSearchNode = new SearchNode(_mouse.Grid, 0);
             OpenHeap.Clear();
             OpenHeap.Insert(StartSearchNode);
-            PathfindingGrid[StartSearchNode._Pos.X, StartSearchNode._Pos.Y]._Walkable = true;
+            PathfindingGrid[StartSearchNode.Pos.X, StartSearchNode.Pos.Y].Walkable = true;
         }
 
         private void EndSearchNode_Click(object sender, System.EventArgs e)
@@ -199,7 +199,7 @@ namespace PathfindingFun
             }
 
             EndSearchNode = new SearchNode(_mouse.Grid, 0);
-            PathfindingGrid[EndSearchNode._Pos.X, EndSearchNode._Pos.Y]._Walkable = true;
+            PathfindingGrid[EndSearchNode.Pos.X, EndSearchNode.Pos.Y].Walkable = true;
         }
 
         #endregion
@@ -311,8 +311,8 @@ namespace PathfindingFun
         private void ResetButton_Click(object sender, EventArgs e)
         {
             Panel1.Refresh();
-            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), StartSearchNode._Pos, ProjectColors.StartNode);
-            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode._Pos, ProjectColors.EndNode);
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), StartSearchNode.Pos, ProjectColors.StartNode);
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode.Pos, ProjectColors.EndNode);
 
             ResetAILabels();
 
@@ -322,9 +322,9 @@ namespace PathfindingFun
                 for (int y = 0; y < _gridDisplay.Dimensions.Height; y++)
                 {
                     SearchNode tmp = PathfindingGrid[x, y];
-                    if (tmp._Walkable == false)
+                    if (tmp.Walkable == false)
                     {
-                        _gridDisplay.ColourSquare(Panel1.CreateGraphics(), tmp._Pos, ProjectColors.Wall);
+                        _gridDisplay.ColourSquare(Panel1.CreateGraphics(), tmp.Pos, ProjectColors.Wall);
                     }
                 }
             }
@@ -386,10 +386,10 @@ namespace PathfindingFun
             Random r = new Random();
             foreach (SearchNode n in PathfindingGrid)
             {
-                n._Walkable = (r.Next(100) > RandomnessBar.Value);
-                if (!n._Walkable)
+                n.Walkable = (r.Next(100) > RandomnessBar.Value);
+                if (!n.Walkable)
                 {
-                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), n._Pos, ProjectColors.Wall);
+                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), n.Pos, ProjectColors.Wall);
                 }
             }
         }
@@ -417,16 +417,16 @@ namespace PathfindingFun
                     // Finished!?
                     if (current == EndSearchNode)
                     {
-                        Point p = PathfindingGrid[current._Pos.X, current._Pos.Y]._Parent;// _Pos;
-                        while (!(p == StartSearchNode._Pos))
+                        Point p = PathfindingGrid[current.Pos.X, current.Pos.Y].Parent;// _Pos;
+                        while (!(p == StartSearchNode.Pos))
                         {
                             _gridDisplay.ColourSquare(Panel1.CreateGraphics(), p, ProjectColors.Path);
-                            p = PathfindingGrid[p.X, p.Y]._Parent;
+                            p = PathfindingGrid[p.X, p.Y].Parent;
                             pathLength++;
                         }
 
                         // Redraw the end node as it was put onto the considered nodes list 
-                        _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode._Pos, ProjectColors.EndNode);
+                        _gridDisplay.ColourSquare(Panel1.CreateGraphics(), EndSearchNode.Pos, ProjectColors.EndNode);
 
                         // Need to add one to the pathLength because the end node counts as part of the path
                         PathLengthTextBox.Text = (pathLength + 1).ToString();
@@ -455,18 +455,18 @@ namespace PathfindingFun
                         SearchNode neighbour = OffsetSearchNodes[key];
                         SearchNode tmp = current + neighbour;
 
-                        int tentativeG = current._G + neighbour._G;
+                        int tentativeG = current.G + neighbour.G;
 
-                        if (ClosedHash.Contains(tmp) && tentativeG >= neighbour._G)
+                        if (ClosedHash.Contains(tmp) && tentativeG >= neighbour.G)
                         {
                             continue;
                         }
 
-                        if (!OpenHeap.Contains(tmp) || tentativeG < neighbour._G)
+                        if (!OpenHeap.Contains(tmp) || tentativeG < neighbour.G)
                         {
                             //tmp._Parent = current._Pos;
-                            PathfindingGrid[tmp._Pos.X, tmp._Pos.Y]._Parent = current._Pos;
-                            tmp._G = tentativeG;
+                            PathfindingGrid[tmp.Pos.X, tmp.Pos.Y].Parent = current.Pos;
+                            tmp.G = tentativeG;
 
                             // Decide which hueristic to use. We use 10.0f for cardinal directions and 14.0f for ordinal 
                             // directions; the cost to move diagonaly is square 2. 10, 14 is about the right ratio and 
@@ -474,19 +474,19 @@ namespace PathfindingFun
                             switch (HeuristicComboBox.SelectedItem.ToString())
                             {
                                 case "Manhatten":
-                                    tmp._H = AI.ManhattanDistance(tmp._Pos, EndSearchNode._Pos, 10.0f);
+                                    tmp.H = AI.ManhattanDistance(tmp.Pos, EndSearchNode.Pos, 10.0f);
                                     break;
 
                                 case "Diagonal Distance":
-                                    tmp._H = AI.DiagonalDistance(tmp._Pos, EndSearchNode._Pos, 10.0f, 14.0f);
+                                    tmp.H = AI.DiagonalDistance(tmp.Pos, EndSearchNode.Pos, 10.0f, 14.0f);
                                     break;
 
                                 case "Euclidean Distance":
-                                    tmp._H = AI.EuclideanDistance(tmp._Pos, EndSearchNode._Pos, 14.0f);
+                                    tmp.H = AI.EuclideanDistance(tmp.Pos, EndSearchNode.Pos, 14.0f);
                                     break;
 
                                 case "None":
-                                    tmp._H = 0;
+                                    tmp.H = 0;
                                     break;
 
                                 default:
@@ -498,7 +498,7 @@ namespace PathfindingFun
                             // straight line from the start to the goal 
                             if (TieBreakerCheckBox.Checked)
                             {
-                                tmp._H += AI.GetTieBreakerScale(tmp._Pos, StartSearchNode._Pos, EndSearchNode._Pos);
+                                tmp.H += AI.GetTieBreakerScale(tmp.Pos, StartSearchNode.Pos, EndSearchNode.Pos);
                             }
 
                             consideredNodesCount++;
@@ -506,10 +506,10 @@ namespace PathfindingFun
                             // Draw considered nodes
                             if (DrawOpenlistCheckBox.Checked)
                             {
-                                _gridDisplay.ColourSquare(Panel1.CreateGraphics(), tmp._Pos, ProjectColors.ConsideredNode);
+                                _gridDisplay.ColourSquare(Panel1.CreateGraphics(), tmp.Pos, ProjectColors.ConsideredNode);
                                 if (SmallGridButton.Checked) // Drawing costs on large map would be pointless,
                                 {                            // also costs are drawn as ints (because it is easier to see)
-                                    _gridDisplay.DrawCosts(Panel1.CreateGraphics(), tmp._Pos, tmp._G, tmp._H);
+                                    _gridDisplay.DrawCosts(Panel1.CreateGraphics(), tmp.Pos, tmp.G, tmp.H);
                                 }
                             }
 

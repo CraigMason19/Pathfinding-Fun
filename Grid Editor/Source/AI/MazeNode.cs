@@ -6,22 +6,22 @@ namespace PathfindingFun
 {
     class MazeNode
     {
-        public int _X { get; set; }
-        public int _Y { get; set; }
-        public char _Direction { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public char Direction { get; set; }
 
         public MazeNode()
         {
-            _X = 0;
-            _Y = 0;
-            _Direction = '0';
+            X = 0;
+            Y = 0;
+            Direction = '0';
         }
 
         public MazeNode(int x, int y, char dir = '0')
         {
-            _X = x;
-            _Y = y;
-            _Direction = dir;
+            X = x;
+            Y = y;
+            Direction = dir;
         }
 
         public override bool Equals(object obj)
@@ -34,7 +34,7 @@ namespace PathfindingFun
             if (obj is MazeNode)
             {
                 MazeNode n = obj as MazeNode;
-                return n._X == this._X && n._Y == this._Y;
+                return n.X == this.X && n.Y == this.Y;
             }
 
             return false;
@@ -50,7 +50,7 @@ namespace PathfindingFun
             {
                 try
                 {
-                    if (searchGrid[current._X + _Offset[i].X, current._Y + _Offset[i].Y]._Walkable)
+                    if (searchGrid[current.X + _Offset[i].X, current.Y + _Offset[i].Y].Walkable)
                     {
                         keys[i] = "";
                     }
@@ -66,7 +66,7 @@ namespace PathfindingFun
 
         public override int GetHashCode()
         {
-            return _X.GetHashCode();
+            return X.GetHashCode();
         }
     }
 }

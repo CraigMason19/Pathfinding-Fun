@@ -22,7 +22,7 @@ namespace PathfindingFun
             {
                 try
                 {
-                    if (!searchGrid[current._Pos.X + _CardinalOffset[i].X, current._Pos.Y + _CardinalOffset[i].Y]._Walkable)
+                    if (!searchGrid[current.Pos.X + _CardinalOffset[i].X, current.Pos.Y + _CardinalOffset[i].Y].Walkable)
                     {
                         keys[i] = "";
                     }
@@ -47,7 +47,7 @@ namespace PathfindingFun
             {
                 try
                 {
-                    if (!searchGrid[current._Pos.X + _OrdinalOffset[i].X, current._Pos.Y + _OrdinalOffset[i].Y]._Walkable)
+                    if (!searchGrid[current.Pos.X + _OrdinalOffset[i].X, current.Pos.Y + _OrdinalOffset[i].Y].Walkable)
                     {
                         keys[i] = "";
                     }
