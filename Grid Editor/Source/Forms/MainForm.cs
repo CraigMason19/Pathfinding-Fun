@@ -79,7 +79,7 @@ namespace PathfindingFun
             OffsetSearchNodes["SW"] = new SearchNode(-1, 1, 14);  // Down Left
 
             OpenHeap = new BinaryHeap<SearchNode>();
-            ClosedHash = new HashSet<SearchNode>(new CustomNodeComparer());
+            ClosedHash = new HashSet<SearchNode>(new SearchNodeComparer());
 
             PathfindingGrid = new SearchNode[_gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height];
             for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)

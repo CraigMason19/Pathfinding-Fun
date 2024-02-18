@@ -49,11 +49,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Source\AI.cs" />
-    <Compile Include="Source\BinaryHeap.cs" />
-    <Compile Include="Source\Maze.cs">
+    <Compile Include="Source\AI\AI.cs" />
+    <Compile Include="Source\AI\BinaryHeap.cs" />
+    <Compile Include="Source\AI\Maze.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Source\AI\MazeNode.cs" />
     <Compile Include="Source\ProjectColors.cs" />
     <Compile Include="Source\Forms\MazeLoadingForm.cs">
       <SubType>Form</SubType>
@@ -70,7 +71,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Source\GridDisplay.cs" />
-    <Compile Include="Source\Node.cs" />
+    <Compile Include="Source\AI\SearchNode.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Source\Forms\MainForm.resx">
