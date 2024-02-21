@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C# Express 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pathfinding Fun", "Grid Editor\Pathfinding Fun.csproj", "{90AF82A0-AD7D-4606-B813-4356A90FC043}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pathfinding Fun", "PathfindingFunApp\Pathfinding Fun.csproj", "{90AF82A0-AD7D-4606-B813-4356A90FC043}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

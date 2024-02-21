@@ -180,7 +180,7 @@ namespace PathfindingFun
 
         private void StartSearchNode_Click(object sender, System.EventArgs e)
         {
-            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _startSearchNode.ToPoint(), ProjectColors.Clear);
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _startSearchNode.Pos, ProjectColors.Clear);
             _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, ProjectColors.StartNode);
             if (SmallGridButton.Checked)
             {
@@ -195,7 +195,7 @@ namespace PathfindingFun
 
         private void EndSearchNode_Click(object sender, System.EventArgs e)
         {
-            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _endSearchNode.ToPoint(), ProjectColors.Clear);
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _endSearchNode.Pos, ProjectColors.Clear);
             _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, ProjectColors.EndNode);
             if (SmallGridButton.Checked)
             {

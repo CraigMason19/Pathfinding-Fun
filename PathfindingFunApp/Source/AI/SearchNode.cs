@@ -80,7 +80,6 @@ namespace PathfindingFun
                 return false;
             }
 
-            // Return true if the fields match:
             return a.Pos.X == b.Pos.X && a.Pos.Y == b.Pos.Y;
         }
 
@@ -105,16 +104,6 @@ namespace PathfindingFun
             return !(a == b);
         }
 
-        public override string ToString()
-        {
-            return(String.Format("[{0},{1}]", Pos.X, Pos.Y));
-        }
-
-        public Point ToPoint()
-        {
-            return new Point(Pos.X, Pos.Y);
-        }
-
         public int CompareTo(SearchNode b)
         {
             return (H + (float)G).CompareTo(b.H + (float)b.G);
@@ -129,6 +118,11 @@ namespace PathfindingFun
         public override int GetHashCode()
         {
             return Pos.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return (String.Format("[{0},{1}]", Pos.X, Pos.Y));
         }
     }
 }

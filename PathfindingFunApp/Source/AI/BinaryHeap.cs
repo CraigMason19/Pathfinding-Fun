@@ -40,9 +40,11 @@ namespace PathfindingFun
 
         public BinaryHeap()
         {
-            _heap = new List<T>();
-            // Add something to the start of the heap to make indexing more efficent
-            _heap.Add(default(T));
+            _heap = new List<T>
+            {
+                // Add something to the start of the heap to make indexing more efficent
+                default
+            };
         }
 
         ~BinaryHeap()
@@ -62,7 +64,7 @@ namespace PathfindingFun
         {
             _heap.Clear();
             // Add something to the start of the heap to make indexing more efficent
-            _heap.Add(default(T));
+            _heap.Add(default);
         }
 
         public void Insert(T t)
@@ -89,14 +91,15 @@ namespace PathfindingFun
         {
             if (_heap.Count - 1 == 0)
             {
-                return default(T);
+                return default;
             }
 
             T smallest = _heap[1];
             BinaryHeapExtension.Swap(_heap, 1, this.Size());
             _heap.RemoveAt(this.Size()); // Pop back
 
-            int swapItem = 1, parent = 1;
+            int swapItem = 1;
+            int parent;
             do
             {
                 parent = swapItem;
