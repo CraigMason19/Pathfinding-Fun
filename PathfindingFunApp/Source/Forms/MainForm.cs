@@ -526,15 +526,17 @@ namespace PathfindingFun
                     }
                 }
 
-                if (SmallGridButton.Checked) // Drawing costs on large map would be pointless,
-                {                            // also costs are drawn as ints (because it is easier to see)
+                if (SmallGridButton.Checked)
+                {
                     _gridDisplay.DrawGridLines(Panel1.CreateGraphics());
                 }
 
-
+                // No solution found   
                 if (current != _endSearchNode)
                 {
-                    // No solution found   
+                    string message = "All potential nodes have been exhausted and no path could be found.";
+                    string title = "No solution found";
+                    MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.None);
                 }
             }
         }
