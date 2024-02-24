@@ -250,7 +250,7 @@ namespace PathfindingFun
                     TieBreakerCheckBox.Checked = true;
                     break;
 
-                case "None":
+                case "None (Dijkstra)":
                     DiagonalCheckBox.Checked = false;
                     UseGCheckBox.Checked = true;
                     TieBreakerCheckBox.Checked = true;
@@ -281,6 +281,7 @@ namespace PathfindingFun
 
             _openHeap.Clear();
             _closedHash.Clear();
+
             ResetAILabels();
 
             Panel1.Invalidate();
@@ -474,7 +475,7 @@ namespace PathfindingFun
 
                             // Decide which hueristic to use. We use 10.0f for cardinal directions and 14.0f for ordinal 
                             // directions; the cost to move diagonaly is square 2. 10, 14 is about the right ratio and 
-                            // avoids lots of square roots. 
+                            // avoids lots of square roots for speed. 
                             switch (HeuristicComboBox.SelectedItem.ToString())
                             {
                                 case "Manhatten":
