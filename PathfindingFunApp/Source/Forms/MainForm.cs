@@ -127,6 +127,25 @@ namespace PathfindingFun
 
         #region Mouse
 
+        private void ProcessWallInput()
+        {
+            // Are we inside the grid
+            if (Helper.IsInRange(0, _gridDisplay.Dimensions.Width - 1, _mouse.Grid.X) &&
+                Helper.IsInRange(0, _gridDisplay.Dimensions.Height - 1, _mouse.Grid.Y))
+            {
+                if (Control.ModifierKeys == Keys.Shift)
+                {
+                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, ProjectColors.Clear);
+                    _pathfindingGrid[_mouse.Grid.X, _mouse.Grid.Y].Walkable = true;
+                }
+                else
+                {
+                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, ProjectColors.Wall);
+                    _pathfindingGrid[_mouse.Grid.X, _mouse.Grid.Y].Walkable = false;
+                }
+            }
+        }
+
         private void Panel1_MouseMove(object sender, MouseEventArgs e)
         {
             UpdateMouseLabels();
@@ -137,13 +156,8 @@ namespace PathfindingFun
             // If the left mouse button is clicked, can draw extra walls.
             if (_mouse.Moved && e.Button == MouseButtons.Left)
             {
-                if (Helper.IsInRange(0, _gridDisplay.Dimensions.Width - 1, _mouse.Grid.X) &&
-                    Helper.IsInRange(0, _gridDisplay.Dimensions.Height - 1, _mouse.Grid.Y))
-                {
-                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, ProjectColors.Wall);
-                    _pathfindingGrid[_mouse.Grid.X, _mouse.Grid.Y].Walkable = false;
-                }
-            }
+                ProcessWallInput();
+            }        
 
             if (SmallGridButton.Checked)
             {
@@ -153,15 +167,10 @@ namespace PathfindingFun
 
         private void Panel1_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == System.Windows.Forms.MouseButtons.Left)
-            {
-                // Need to draw the first square on mouse down        
-                if (Helper.IsInRange(0, _gridDisplay.Dimensions.Width - 1, _mouse.Grid.X) &&
-                    Helper.IsInRange(0, _gridDisplay.Dimensions.Height - 1, _mouse.Grid.Y))
-                {
-                    _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, ProjectColors.Wall);
-                    _pathfindingGrid[_mouse.Grid.X, _mouse.Grid.Y].Walkable = false;
-                }
+            // Need to draw the first square on mouse down
+            if (e.Button == MouseButtons.Left)
+            {      
+                ProcessWallInput();
             }
         }
 
@@ -182,28 +191,30 @@ namespace PathfindingFun
         {
             _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _startSearchNode.Pos, ProjectColors.Clear);
             _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, ProjectColors.StartNode);
-            if (SmallGridButton.Checked)
-            {
-                _gridDisplay.DrawGridLines(Panel1.CreateGraphics());
-            }
 
             _startSearchNode = new SearchNode(_mouse.Grid, 0);
             _openHeap.Clear();
             _openHeap.Insert(_startSearchNode);
             _pathfindingGrid[_startSearchNode.Pos.X, _startSearchNode.Pos.Y].Walkable = true;
+
+            if (SmallGridButton.Checked)
+            {
+                _gridDisplay.DrawGridLines(Panel1.CreateGraphics());
+            }
         }
 
         private void EndSearchNode_Click(object sender, System.EventArgs e)
         {
             _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _endSearchNode.Pos, ProjectColors.Clear);
             _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, ProjectColors.EndNode);
+
+            _endSearchNode = new SearchNode(_mouse.Grid, 0);
+            _pathfindingGrid[_endSearchNode.Pos.X, _endSearchNode.Pos.Y].Walkable = true;
+
             if (SmallGridButton.Checked)
             {
                 _gridDisplay.DrawGridLines(Panel1.CreateGraphics());
             }
-
-            _endSearchNode = new SearchNode(_mouse.Grid, 0);
-            _pathfindingGrid[_endSearchNode.Pos.X, _endSearchNode.Pos.Y].Walkable = true;
         }
 
         #endregion
@@ -270,9 +281,6 @@ namespace PathfindingFun
                 _gridDisplay.DrawGridLines(e.Graphics);
             }
         }
-
-
-
 
         public void Clear()
         {
