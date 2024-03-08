@@ -157,12 +157,9 @@ namespace PathfindingFun
             if (_mouse.Moved && e.Button == MouseButtons.Left)
             {
                 ProcessWallInput();
-            }        
-
-            if (SmallGridButton.Checked)
-            {
-                _gridDisplay.DrawGridLines(Panel1.CreateGraphics());
             }
+
+            DrawGrid();
         }
 
         private void Panel1_MouseDown(object sender, MouseEventArgs e)
@@ -197,20 +194,26 @@ namespace PathfindingFun
             _openHeap.Insert(_startSearchNode);
             _pathfindingGrid[_startSearchNode.Pos.X, _startSearchNode.Pos.Y].Walkable = true;
 
-            if (SmallGridButton.Checked)
-            {
-                _gridDisplay.DrawGridLines(Panel1.CreateGraphics());
-            }
+            DrawGrid();
         }
 
         private void EndSearchNode_Click(object sender, System.EventArgs e)
         {
-            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _endSearchNode.Pos, ProjectColors.Clear);
-            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, ProjectColors.EndNode);
-
             _endSearchNode = new SearchNode(_mouse.Grid, 0);
             _pathfindingGrid[_endSearchNode.Pos.X, _endSearchNode.Pos.Y].Walkable = true;
 
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _endSearchNode.Pos, ProjectColors.Clear);
+            _gridDisplay.ColourSquare(Panel1.CreateGraphics(), _mouse.Grid, ProjectColors.EndNode);
+
+            DrawGrid();
+        }
+
+        #endregion
+
+        #region Drawing
+
+        private void DrawGrid()
+        {
             if (SmallGridButton.Checked)
             {
                 _gridDisplay.DrawGridLines(Panel1.CreateGraphics());
@@ -219,7 +222,27 @@ namespace PathfindingFun
 
         #endregion
 
-        #region GUI
+        public void Clear()
+        {
+            _startSearchNode = SearchNode.OutOfIndexNode;
+            _endSearchNode = SearchNode.OutOfIndexNode;
+
+            _openHeap.Clear();
+            _closedHash.Clear();
+
+            ResetAILabels();
+
+            Panel1.Invalidate();
+
+            _pathfindingGrid = new SearchNode[_gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height];
+            for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
+            {
+                for (int y = 0; y < _gridDisplay.Dimensions.Height; y++)
+                {
+                    _pathfindingGrid[x, y] = new SearchNode(x, y);
+                }
+            }
+        }
 
         private void SmallGridButton_Click(object sender, EventArgs e)
         {
@@ -272,36 +295,9 @@ namespace PathfindingFun
             }
         }
 
-        #endregion
-
         private void Panel1_Paint(object sender, PaintEventArgs e)
         {
-            if (SmallGridButton.Checked)
-            {
-                _gridDisplay.DrawGridLines(e.Graphics);
-            }
-        }
-
-        public void Clear()
-        {
-            _startSearchNode = SearchNode.OutOfIndexNode;
-            _endSearchNode = SearchNode.OutOfIndexNode;
-
-            _openHeap.Clear();
-            _closedHash.Clear();
-
-            ResetAILabels();
-
-            Panel1.Invalidate();
-
-            _pathfindingGrid = new SearchNode[_gridDisplay.Dimensions.Width, _gridDisplay.Dimensions.Height];
-            for (int x = 0; x < _gridDisplay.Dimensions.Width; x++)
-            {
-                for (int y = 0; y < _gridDisplay.Dimensions.Height; y++)
-                {
-                    _pathfindingGrid[x, y] = new SearchNode(x, y);
-                }
-            }
+            DrawGrid();
         }
 
         private void ClearButton_Click(object sender, EventArgs e)
@@ -346,10 +342,7 @@ namespace PathfindingFun
             _openHeap.Insert(_startSearchNode);
             _closedHash.Clear();
 
-            if (SmallGridButton.Checked)
-            {
-                _gridDisplay.DrawGridLines(Panel1.CreateGraphics());
-            }
+            DrawGrid();
         }
 
         private void Form1_Resize(object sender, EventArgs e)
@@ -534,10 +527,7 @@ namespace PathfindingFun
                     }
                 }
 
-                if (SmallGridButton.Checked)
-                {
-                    _gridDisplay.DrawGridLines(Panel1.CreateGraphics());
-                }
+                DrawGrid();
 
                 // No solution found   
                 if (current != _endSearchNode)
